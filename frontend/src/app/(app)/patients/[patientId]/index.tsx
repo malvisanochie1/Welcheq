@@ -9,6 +9,7 @@ import {
   Activity,
   CalendarClock,
   ClipboardList,
+  HeartPulse,
   ListChecks,
   ShieldAlert,
   ShieldCheck,
@@ -118,6 +119,12 @@ export default function PatientScreen() {
           subtitle={describeToday(today)}
           accessory={todayAccessory(today)}
           onPress={() => router.push({ pathname: '/patients/[patientId]/checklist', params })}
+        />
+        <LinkCard
+          icon={HeartPulse}
+          title="Health record"
+          subtitle="Medicines, allergies, conditions and documents"
+          onPress={() => router.push({ pathname: '/patients/[patientId]/health-record', params })}
         />
         <LinkCard
           icon={Activity}
