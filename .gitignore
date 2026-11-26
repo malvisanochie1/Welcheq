@@ -6,6 +6,7 @@ coverage/
 .env
 .env.*
 !.env.example
+!frontend/.env.production
 
 frontend/.expo/
 frontend/web-build/

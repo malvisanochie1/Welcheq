@@ -13,11 +13,6 @@ concurrency:
   group: ota-update
   cancel-in-progress: true
 
-env:
-  EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
-  EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
-  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -29,9 +24,7 @@ jobs:
         id: ready
         working-directory: frontend
         run: |
-          linked=$(node -p "Boolean(require('./app.json').expo.extra?.eas?.projectId)")
-          configured=$([ -n "$EXPO_PUBLIC_SUPABASE_URL" ] && [ -n "$EXPO_PUBLIC_API_URL" ] && echo true || echo false)
-          echo "ok=$([ "$linked" = true ] && [ "$configured" = true ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "ok=$(node -p "Boolean(require('./app.json').expo.extra?.eas?.projectId)")" >> "$GITHUB_OUTPUT"
 
       - if: steps.ready.outputs.ok == 'true'
         uses: ./.github/actions/setup-expo

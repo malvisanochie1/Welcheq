@@ -5,26 +5,12 @@ on: workflow_dispatch
 permissions:
   contents: read
 
-env:
-  EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
-  EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
-  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check app configuration
-        run: |
-          for name in EXPO_PUBLIC_API_URL EXPO_PUBLIC_SUPABASE_URL EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Repository variable $name is not set"
-              exit 1
-            fi
-          done
 
       - uses: ./.github/actions/setup-expo
         with:
