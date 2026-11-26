@@ -1,0 +1,33 @@
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import { pinoHttp } from 'pino-http';
+
+import { env } from '@/config/env';
+import { REQUEST_LIMITS } from '@/config/security';
+import { logger } from '@/lib/logger';
+import { errorHandler, notFoundHandler } from '@/middleware/error-handler';
+import { globalRateLimit } from '@/middleware/rate-limit';
+import { healthRouter } from '@/modules/health/health.routes';
+import { profileRouter } from '@/modules/profile/profile.routes';
+
+export function createApp() {
+  const app = express();
+
+  app.disable('x-powered-by');
+  app.set('trust proxy', 1);
+
+  app.use(helmet());
+  app.use(cors({ origin: env.CORS_ORIGINS, credentials: false, maxAge: 600 }));
+  app.use(pinoHttp({ logger }));
+  app.use(globalRateLimit);
+  app.use(express.json({ limit: REQUEST_LIMITS.JSON_BODY, strict: true }));
+
+  app.use('/health', healthRouter);
+  app.use('/v1/me', profileRouter);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+}

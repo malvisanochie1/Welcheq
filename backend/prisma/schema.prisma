@@ -1,0 +1,137 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  FAMILY
+  CAREGIVER
+  PATIENT
+  AGENCY_ADMIN
+}
+
+enum OrganizationRole {
+  ADMIN
+  COORDINATOR
+  CAREGIVER
+}
+
+enum CareRelationship {
+  OWNER
+  FAMILY_VIEWER
+  CAREGIVER
+  SELF
+}
+
+enum ProofMethod {
+  LOCATION
+  SELFIE
+  ROTATING_CODE
+  SURPRISE_CHECK
+}
+
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  fullName  String
+  phone     String?
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships     OrganizationMember[]
+  patientAccess   PatientAccess[]
+  patientsCreated Patient[]            @relation("PatientCreatedBy")
+  auditEvents     AuditEvent[]
+
+  @@map("users")
+}
+
+model Organization {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  OrganizationMember[]
+  patients Patient[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  userId         String           @db.Uuid
+  role           OrganizationRole
+  createdAt      DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("organization_members")
+}
+
+model Patient {
+  id                   String        @id @default(uuid()) @db.Uuid
+  organizationId       String?       @db.Uuid
+  createdById          String        @db.Uuid
+  fullName             String
+  dateOfBirth          DateTime?     @db.Date
+  homeAddress          String
+  homeLatitude         Float
+  homeLongitude        Float
+  geofenceRadiusMeters Int           @default(150)
+  proofMethods         ProofMethod[] @default([LOCATION])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  archivedAt           DateTime?
+
+  organization Organization?   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy    User            @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  access       PatientAccess[]
+
+  @@index([organizationId])
+  @@map("patients")
+}
+
+model PatientAccess {
+  id           String           @id @default(uuid()) @db.Uuid
+  patientId    String           @db.Uuid
+  userId       String           @db.Uuid
+  relationship CareRelationship
+  grantedById  String?          @db.Uuid
+  createdAt    DateTime         @default(now())
+  revokedAt    DateTime?
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, userId])
+  @@index([userId])
+  @@map("patient_access")
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@map("audit_events")
+}
