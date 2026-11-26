@@ -8,6 +8,8 @@ export const AUDIT_ACTION = {
   INVITATION_REVOKED: 'invitation.revoked',
   INVITATION_ACCEPTED: 'invitation.accepted',
   MEMBER_REMOVED: 'member.removed',
+  CARE_PLAN_CHANGED: 'care_plan.changed',
+  TASK_RECORD_CHANGED: 'task_record.changed',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];

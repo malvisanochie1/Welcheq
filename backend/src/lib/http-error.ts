@@ -23,6 +23,10 @@ export class HttpError extends Error {
     this.name = 'HttpError';
   }
 
+  static invalid(message: string) {
+    return new HttpError(400, ERROR_CODE.VALIDATION_FAILED, message);
+  }
+
   static unauthenticated(message = 'Please sign in to continue') {
     return new HttpError(401, ERROR_CODE.UNAUTHENTICATED, message);
   }

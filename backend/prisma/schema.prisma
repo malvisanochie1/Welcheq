@@ -28,6 +28,20 @@ enum CareRelationship {
   SELF
 }
 
+enum CareTaskCategory {
+  MEDICATION
+  VITALS
+  PERSONAL_CARE
+  MEAL
+  MOBILITY
+  OTHER
+}
+
+enum TaskOutcome {
+  DONE
+  NOT_DONE
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -50,6 +64,8 @@ model User {
   auditEvents         AuditEvent[]
   invitationsSent     Invitation[]         @relation("InvitationCreatedBy")
   invitationsAccepted Invitation[]         @relation("InvitationAcceptedBy")
+  careTasksCreated    CareTask[]
+  taskRecords         TaskRecord[]
 
   @@map("users")
 }
@@ -92,6 +108,7 @@ model Patient {
   homeLongitude        Float
   geofenceRadiusMeters Int           @default(150)
   proofMethods         ProofMethod[] @default([LOCATION])
+  timeZone             String        @default("Africa/Lagos")
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   archivedAt           DateTime?
@@ -100,6 +117,8 @@ model Patient {
   createdBy    User            @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   access       PatientAccess[]
   invitations  Invitation[]
+  careTasks    CareTask[]
+  taskRecords  TaskRecord[]
 
   @@index([organizationId])
   @@map("patients")
@@ -140,6 +159,46 @@ model Invitation {
 
   @@index([patientId])
   @@map("invitations")
+}
+
+model CareTask {
+  id                   String           @id @default(uuid()) @db.Uuid
+  patientId            String           @db.Uuid
+  title                String
+  category             CareTaskCategory
+  instructions         String?
+  minutesAfterMidnight Int
+  daysOfWeek           Int[]
+  createdById          String           @db.Uuid
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  archivedAt           DateTime?
+
+  patient   Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdBy User         @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  records   TaskRecord[]
+
+  @@index([patientId, archivedAt])
+  @@map("care_tasks")
+}
+
+model TaskRecord {
+  id           String      @id @default(uuid()) @db.Uuid
+  careTaskId   String      @db.Uuid
+  patientId    String      @db.Uuid
+  dueDate      DateTime    @db.Date
+  outcome      TaskOutcome
+  note         String?
+  recordedById String      @db.Uuid
+  recordedAt   DateTime    @default(now())
+
+  careTask   CareTask @relation(fields: [careTaskId], references: [id], onDelete: Cascade)
+  patient    Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  recordedBy User     @relation(fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@unique([careTaskId, dueDate])
+  @@index([patientId, dueDate])
+  @@map("task_records")
 }
 
 model AuditEvent {

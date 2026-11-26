@@ -36,3 +36,8 @@ export const PATIENT_MANAGER_ROLES = [
 export const PATIENT_EDITOR_RELATIONSHIPS = [
   CARE_RELATIONSHIP.OWNER,
 ] as const satisfies readonly CareRelationship[];
+
+export const TASK_RECORDER_RELATIONSHIPS = [
+  CARE_RELATIONSHIP.OWNER,
+  CARE_RELATIONSHIP.CAREGIVER,
+] as const satisfies readonly CareRelationship[];
