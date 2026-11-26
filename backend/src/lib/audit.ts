@@ -22,6 +22,9 @@ export const AUDIT_ACTION = {
   VISIT_REPORT_CHANGED: 'visit_report.changed',
   INCIDENT_REPORTED: 'incident.reported',
   INCIDENT_RESOLVED: 'incident.resolved',
+  HEALTH_PROFILE_ENTRY_REMOVED: 'health_profile.entry_removed',
+  HEALTH_DOCUMENT_ADDED: 'health_document.added',
+  HEALTH_DOCUMENT_REMOVED: 'health_document.removed',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];

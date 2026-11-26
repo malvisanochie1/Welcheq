@@ -110,6 +110,10 @@ export const supabasePhotoStorage: PhotoStorage = {
     );
     return storageUrl(signedURL.replace(/^\//, ''));
   },
+
+  async remove(path) {
+    await storageRequest(`object/${BUCKET}`, { method: 'DELETE', body: { prefixes: [path] } });
+  },
 };
 
 export const PHOTO_LIMITS = { MAX_PHOTO_BYTES, ALLOWED_TYPES } as const;

@@ -96,6 +96,12 @@ enum IncidentStatus {
   RESOLVED
 }
 
+enum AllergySeverity {
+  MILD
+  MODERATE
+  SEVERE
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -129,6 +135,10 @@ model User {
   readingsRecorded    HealthReading[]
   incidentsReported   Incident[]           @relation("IncidentReporter")
   incidentsResolved   Incident[]           @relation("IncidentResolver")
+  medicationsAdded    Medication[]         @relation("MedicationAuthor")
+  allergiesAdded      Allergy[]            @relation("AllergyAuthor")
+  conditionsAdded     Condition[]          @relation("ConditionAuthor")
+  documentsUploaded   HealthDocument[]     @relation("DocumentUploader")
 
   @@map("users")
 }
@@ -191,6 +201,10 @@ model Patient {
   visitReports    VisitReport[]
   readings        HealthReading[]
   incidents       Incident[]
+  medications     Medication[]
+  allergies       Allergy[]
+  conditions      Condition[]
+  documents       HealthDocument[]
 
   @@index([organizationId])
   @@map("patients")
@@ -439,6 +453,73 @@ model Incident {
 
   @@index([patientId, status, occurredAt])
   @@map("incidents")
+}
+
+model Medication {
+  id           String    @id @default(uuid()) @db.Uuid
+  patientId    String    @db.Uuid
+  name         String
+  dose         String?
+  instructions String?
+  stoppedAt    DateTime?
+  createdById  String    @db.Uuid
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("MedicationAuthor", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([patientId, stoppedAt])
+  @@map("medications")
+}
+
+model Allergy {
+  id          String          @id @default(uuid()) @db.Uuid
+  patientId   String          @db.Uuid
+  substance   String
+  reaction    String?
+  severity    AllergySeverity
+  createdById String          @db.Uuid
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("AllergyAuthor", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([patientId])
+  @@map("allergies")
+}
+
+model Condition {
+  id          String    @id @default(uuid()) @db.Uuid
+  patientId   String    @db.Uuid
+  name        String
+  notes       String?
+  diagnosedOn DateTime? @db.Date
+  createdById String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("ConditionAuthor", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([patientId])
+  @@map("conditions")
+}
+
+model HealthDocument {
+  id           String   @id @default(uuid()) @db.Uuid
+  patientId    String   @db.Uuid
+  title        String
+  storagePath  String   @unique
+  uploadedById String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  uploadedBy User    @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
+
+  @@index([patientId, createdAt])
+  @@map("health_documents")
 }
 
 model AuditEvent {

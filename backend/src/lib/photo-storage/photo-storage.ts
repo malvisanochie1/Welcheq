@@ -9,4 +9,5 @@ export interface PhotoStorage {
   createUploadUrl(path: string): Promise<string>;
   describe(path: string): Promise<StoredPhoto | null>;
   createViewUrl(path: string, expiresInSeconds: number): Promise<string>;
+  remove(path: string): Promise<void>;
 }

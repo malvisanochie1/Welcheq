@@ -6,5 +6,10 @@ import { supabasePhotoStorage } from '@/lib/photo-storage/supabase-photo-storage
 export const capabilitiesRouter = Router();
 
 capabilitiesRouter.get('/', (_req, res) => {
-  res.json({ data: { selfie: supabasePhotoStorage.isConfigured } });
+  res.json({
+    data: {
+      selfie: supabasePhotoStorage.isConfigured,
+      documents: supabasePhotoStorage.isConfigured,
+    },
+  });
 });

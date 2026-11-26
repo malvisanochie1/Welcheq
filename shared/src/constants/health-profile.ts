@@ -1,0 +1,15 @@
+export const ALLERGY_SEVERITY = {
+  MILD: 'MILD',
+  MODERATE: 'MODERATE',
+  SEVERE: 'SEVERE',
+} as const;
+
+export type AllergySeverity = (typeof ALLERGY_SEVERITY)[keyof typeof ALLERGY_SEVERITY];
+
+export const HEALTH_PROFILE_LIMITS = {
+  NAME_MAX_LENGTH: 120,
+  DETAIL_MAX_LENGTH: 500,
+  MAX_ACTIVE_MEDICATIONS: 40,
+  MAX_ALLERGIES: 40,
+  MAX_CONDITIONS: 40,
+} as const;
