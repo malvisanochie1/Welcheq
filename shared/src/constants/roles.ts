@@ -27,3 +27,12 @@ export const CARE_RELATIONSHIP = {
 export type CareRelationship = (typeof CARE_RELATIONSHIP)[keyof typeof CARE_RELATIONSHIP];
 
 export const CARE_RELATIONSHIPS = Object.values(CARE_RELATIONSHIP);
+
+export const PATIENT_MANAGER_ROLES = [
+  USER_ROLE.FAMILY,
+  USER_ROLE.AGENCY_ADMIN,
+] as const satisfies readonly UserRole[];
+
+export const PATIENT_EDITOR_RELATIONSHIPS = [
+  CARE_RELATIONSHIP.OWNER,
+] as const satisfies readonly CareRelationship[];

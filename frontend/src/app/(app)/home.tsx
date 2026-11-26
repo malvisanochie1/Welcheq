@@ -1,29 +1,111 @@
-import { View } from 'react-native';
+import { PATIENT_MANAGER_ROLES } from '@welcheq/shared';
+import { router } from 'expo-router';
+import { Settings } from 'lucide-react-native';
+import { Pressable, View } from 'react-native';
 
+import { EmptyState } from '@/components/layout/EmptyState';
+import { ErrorState } from '@/components/layout/ErrorState';
 import { Screen } from '@/components/layout/Screen';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { Button } from '@/components/ui/Button';
-import { Text } from '@/components/ui/Text';
-import { SIGN_UP_ROLE_OPTIONS } from '@/config/roles';
-import { signOut } from '@/features/auth/api/auth.api';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
+import { PatientCard } from '@/features/patients/components/PatientCard';
+import { usePatients } from '@/features/patients/hooks/use-patients';
+import { useIsWideLayout } from '@/hooks/use-is-wide-layout';
+import { cn } from '@/lib/cn';
+import { palette, touchTarget } from '@/theme';
+
+const SKELETON_ROWS = 3;
+const CARD_HEIGHT = 80;
+const ICON_SIZE = 22;
+
+const EMPTY_COPY = {
+  manager: {
+    title: 'Add the person you care for',
+    message: 'Register them once. Then invite their caregiver and set up their daily routine.',
+  },
+  caregiver: {
+    title: 'No patients yet',
+    message: 'When a family or agency adds you as a caregiver, their patient will appear here.',
+  },
+} as const;
 
 export default function HomeScreen() {
   const { data: profile } = useOwnProfile();
+  const patients = usePatients();
+  const isWide = useIsWideLayout();
+  const canRegister = (PATIENT_MANAGER_ROLES as readonly string[]).includes(profile?.role ?? '');
+  const emptyCopy = canRegister ? EMPTY_COPY.manager : EMPTY_COPY.caregiver;
 
-  if (!profile) {
-    return null;
+  if (patients.isError) {
+    return (
+      <ErrorState
+        title="We couldn't load your patients"
+        message={patients.error.message}
+        onRetry={() => patients.refetch()}
+      />
+    );
   }
 
-  const firstName = profile.fullName.split(' ')[0];
-  const roleTitle = SIGN_UP_ROLE_OPTIONS.find((option) => option.role === profile.role)?.title;
+  const addPatient = () => router.push('/patients/new');
 
   return (
-    <Screen contentClassName="gap-6">
-      <View className="gap-1">
-        <Text variant="caption">Welcome, {firstName}</Text>
-        <Text variant="title">{roleTitle}</Text>
-      </View>
-      <Button label="Sign out" variant="secondary" onPress={signOut} />
+    <Screen isWide={isWide} contentClassName="gap-6">
+      <ScreenHeader
+        title={canRegister ? 'Your loved ones' : 'Your patients'}
+        subtitle={profile ? `Hello, ${profile.fullName.split(' ')[0]}` : undefined}
+        action={
+          !isWide && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Settings"
+              onPress={() => router.push('/settings')}
+              className="items-center justify-center"
+              style={{ minWidth: touchTarget.min, minHeight: touchTarget.min }}
+            >
+              <Settings size={ICON_SIZE} color={palette.ink} />
+            </Pressable>
+          )
+        }
+      />
+
+      {patients.isPending ? (
+        <View className="gap-3">
+          {Array.from({ length: SKELETON_ROWS }, (_, index) => (
+            <Skeleton key={index} height={CARD_HEIGHT} />
+          ))}
+        </View>
+      ) : patients.data.length === 0 ? (
+        <EmptyState
+          title={emptyCopy.title}
+          message={emptyCopy.message}
+          action={canRegister && <Button label="Add a loved one" onPress={addPatient} />}
+        />
+      ) : (
+        <View className="gap-4">
+          <View className={cn('gap-3', isWide && 'flex-row flex-wrap')}>
+            {patients.data.map((patient) => (
+              <View key={patient.id} className={cn(isWide && 'w-[49%]')}>
+                <PatientCard
+                  patient={patient}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/patients/[patientId]',
+                      params: { patientId: patient.id },
+                    })
+                  }
+                />
+              </View>
+            ))}
+          </View>
+          {canRegister && (
+            <View className={cn(isWide && 'self-start')}>
+              <Button label="Add another" variant="secondary" onPress={addPatient} />
+            </View>
+          )}
+        </View>
+      )}
     </Screen>
   );
 }

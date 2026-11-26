@@ -9,6 +9,7 @@ import { logger } from '@/lib/logger';
 import { errorHandler, notFoundHandler } from '@/middleware/error-handler';
 import { globalRateLimit } from '@/middleware/rate-limit';
 import { healthRouter } from '@/modules/health/health.routes';
+import { patientRouter } from '@/modules/patients/patient.routes';
 import { profileRouter } from '@/modules/profile/profile.routes';
 
 export function createApp() {
@@ -25,6 +26,7 @@ export function createApp() {
 
   app.use('/health', healthRouter);
   app.use('/v1/me', profileRouter);
+  app.use('/v1/patients', patientRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

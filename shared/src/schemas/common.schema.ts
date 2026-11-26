@@ -4,7 +4,11 @@ import { PAGINATION, TEXT_LIMIT } from '../constants/limits';
 
 export const idSchema = z.uuid();
 
-export const personNameSchema = z.string().trim().min(2).max(TEXT_LIMIT.NAME);
+export const personNameSchema = z
+  .string()
+  .trim()
+  .min(2, 'Enter a full name')
+  .max(TEXT_LIMIT.NAME, 'This name is too long');
 
 export const phoneSchema = z
   .string()

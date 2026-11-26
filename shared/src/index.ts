@@ -4,5 +4,6 @@ export * from './constants/roles';
 export * from './geo/distance';
 export * from './schemas/auth.schema';
 export * from './schemas/common.schema';
+export * from './schemas/patient.schema';
 export * from './schemas/profile.schema';
 export * from './schemas/proof-settings.schema';

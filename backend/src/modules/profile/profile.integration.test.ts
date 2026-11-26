@@ -1,13 +1,10 @@
-import type * as Jose from 'jose';
+import '@/test/mock-jwks';
+
 import request from 'supertest';
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestUser, signAccessToken, testJwks } from '@/test/auth-tokens';
-
-vi.mock('jose', async (importOriginal) => {
-  const jose = await importOriginal<typeof Jose>();
-  return { ...jose, createRemoteJWKSet: () => jose.createLocalJWKSet(testJwks) };
-});
+import { createTestUser, signAccessToken } from '@/test/auth-tokens';
+import { resetDatabase } from '@/test/reset-database';
 
 const { createApp } = await import('@/app');
 const { prisma } = await import('@/lib/prisma');
@@ -21,7 +18,7 @@ async function authHeader(user = createTestUser()) {
 }
 
 beforeEach(async () => {
-  await prisma.user.deleteMany();
+  await resetDatabase(prisma);
 });
 
 afterAll(async () => {
