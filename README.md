@@ -10,11 +10,13 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-12201F)
 ![Version](https://img.shields.io/badge/version-0.3.0-B8692A)
 
-<img src="docs/screenshots/mobile-welcome.webp" width="230" alt="Welcome screen" />
-&nbsp;&nbsp;
-<img src="docs/screenshots/mobile-sign-in.webp" width="230" alt="Sign in on a phone" />
+<img src="docs/screenshots/mobile-patient.webp" width="230" alt="A patient's page" />
+&nbsp;
+<img src="docs/screenshots/mobile-health-record.webp" width="230" alt="Health record" />
+&nbsp;
+<img src="docs/screenshots/mobile-notifications.webp" width="230" alt="Notifications" />
 
-<img src="docs/screenshots/web-sign-in.webp" width="720" alt="Sign in on desktop web" />
+<img src="docs/screenshots/web-overview.webp" width="720" alt="Overview dashboard on desktop web" />
 
 </div>
 
@@ -26,13 +28,30 @@ every visit from anywhere, and each patient's health details live in one secure 
 
 ## Features
 
-| Feature                       | What it does                                                                                           |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Verified attendance**       | Check-in only works at the patient's home. Families can add a selfie, rotating code or surprise check. |
-| **Daily care plan**           | The family sets the routine once; caregivers get it as a daily checklist.                              |
-| **Daily call to the patient** | A reminder to call, then a short checklist that flags answers that don't match the caregiver's.        |
-| **Health record**             | Medicines, allergies, conditions, readings and documents in one place, with who recorded each.         |
-| **One product, three apps**   | Native Android and iOS apps and a full desktop web app on one shared backend.                          |
+| Feature                       | What it does                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Verified attendance**       | Check-in only works at the patient's home. Families can add a selfie, rotating home code or surprise check.   |
+| **Works offline**             | Check-ins made without signal are kept on the phone and sent when the connection returns.                     |
+| **Daily care plan**           | The family sets the routine once; caregivers get it as a daily checklist.                                     |
+| **Visit reports**             | After each visit the caregiver records how the patient was, with notes and readings on a number pad.          |
+| **Daily call to the patient** | A reminder to call, then a short checklist that flags answers that don't match the caregiver's.               |
+| **Health record**             | Medicines, allergies, conditions, readings and document photos, each showing who recorded it.                 |
+| **Incidents**                 | Anyone on the care team reports a fall or concern; the family records how it was resolved.                    |
+| **Notifications**             | Arrivals, departures, missed visits, reports, incidents and messages, with an unread count.                   |
+| **Care team messages**        | One conversation per patient, shared by the family and caregivers.                                            |
+| **Reviews and track record**  | Families rate caregivers after a completed visit and see punctuality over the last 90 days.                   |
+| **Overview dashboard**        | Visits, on-time arrivals, missed visits and incidents across every patient, for agencies and larger families. |
+| **Share with a doctor**       | Exports the health record as FHIR R4 with LOINC-coded vital signs.                                            |
+| **Display settings**          | Larger text, high contrast, night mode and easier reading for people with dyslexia.                           |
+| **One product, three apps**   | Native Android and iOS apps and a full desktop web app on one shared backend.                                 |
+
+<div align="center">
+<img src="docs/screenshots/mobile-messages.webp" width="230" alt="Care team messages" />
+&nbsp;
+<img src="docs/screenshots/mobile-caregiver.webp" width="230" alt="Caregiver reviews and track record" />
+&nbsp;
+<img src="docs/screenshots/mobile-night-mode.webp" width="230" alt="Night mode" />
+</div>
 
 ## How it works
 
