@@ -16,6 +16,7 @@ export function toPatientResponse(patient: PatientRecord, relationship: CareRela
     relationship,
     timeZone: patient.timeZone,
     isHomeDisplayConfigured: patient.homeCodeSecret !== null,
+    phone: patient.phone,
     createdAt: patient.createdAt,
     updatedAt: patient.updatedAt,
   };

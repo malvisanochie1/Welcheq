@@ -41,3 +41,8 @@ export const TASK_RECORDER_RELATIONSHIPS = [
   CARE_RELATIONSHIP.OWNER,
   CARE_RELATIONSHIP.CAREGIVER,
 ] as const satisfies readonly CareRelationship[];
+
+export const FAMILY_RELATIONSHIPS = [
+  CARE_RELATIONSHIP.OWNER,
+  CARE_RELATIONSHIP.FAMILY_VIEWER,
+] as const satisfies readonly CareRelationship[];

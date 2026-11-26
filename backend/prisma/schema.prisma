@@ -50,6 +50,11 @@ enum AttendanceFlag {
   CHECKED_OUT_AWAY
 }
 
+enum CallOutcome {
+  REACHED
+  UNREACHABLE
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -78,6 +83,7 @@ model User {
   shiftsCreated       Shift[]              @relation("ShiftCreatedBy")
   visits              Visit[]              @relation("VisitCaregiver")
   openVisit           Visit?               @relation("OpenVisit")
+  dailyCalls          DailyCall[]
 
   @@map("users")
 }
@@ -122,6 +128,7 @@ model Patient {
   proofMethods         ProofMethod[] @default([LOCATION])
   timeZone             String        @default("Africa/Lagos")
   homeCodeSecret       String?
+  phone                String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   archivedAt           DateTime?
@@ -135,6 +142,7 @@ model Patient {
   shifts          Shift[]
   visits          Visit[]
   displayPairings HomeDisplayPairing[]
+  dailyCalls      DailyCall[]
 
   @@index([organizationId])
   @@map("patients")
@@ -301,6 +309,25 @@ model HomeDisplayPairing {
 
   @@index([patientId])
   @@map("home_display_pairings")
+}
+
+model DailyCall {
+  id            String      @id @default(uuid()) @db.Uuid
+  patientId     String      @db.Uuid
+  callerId      String      @db.Uuid
+  callDate      DateTime    @db.Date
+  outcome       CallOutcome
+  /// Each question as asked, the answer given and whether it contradicts the caregiver's record.
+  answers       Json
+  mismatchCount Int         @default(0)
+  note          String?
+  createdAt     DateTime    @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caller  User    @relation(fields: [callerId], references: [id], onDelete: Cascade)
+
+  @@index([patientId, callDate])
+  @@map("daily_calls")
 }
 
 model AuditEvent {

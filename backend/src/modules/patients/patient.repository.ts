@@ -14,6 +14,7 @@ export const PATIENT_FIELDS = {
   proofMethods: true,
   timeZone: true,
   homeCodeSecret: true,
+  phone: true,
   createdAt: true,
   updatedAt: true,
 } as const satisfies Prisma.PatientSelect;

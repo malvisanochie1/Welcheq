@@ -18,6 +18,7 @@ export const AUDIT_ACTION = {
   HOME_DISPLAY_PAIRED: 'home_display.paired',
   HOME_DISPLAY_RESET: 'home_display.reset',
   SURPRISE_CHECK_ANSWERED: 'surprise_check.answered',
+  PATIENT_CONTACT_UPDATED: 'patient.contact_updated',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];
