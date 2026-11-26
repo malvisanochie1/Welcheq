@@ -19,6 +19,9 @@ export const AUDIT_ACTION = {
   HOME_DISPLAY_RESET: 'home_display.reset',
   SURPRISE_CHECK_ANSWERED: 'surprise_check.answered',
   PATIENT_CONTACT_UPDATED: 'patient.contact_updated',
+  VISIT_REPORT_CHANGED: 'visit_report.changed',
+  INCIDENT_REPORTED: 'incident.reported',
+  INCIDENT_RESOLVED: 'incident.resolved',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];

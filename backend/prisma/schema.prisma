@@ -55,6 +55,47 @@ enum CallOutcome {
   UNREACHABLE
 }
 
+enum ReadingType {
+  BLOOD_PRESSURE
+  HEART_RATE
+  TEMPERATURE
+  BLOOD_GLUCOSE
+  OXYGEN_SATURATION
+  WEIGHT
+}
+
+enum ReadingSource {
+  CAREGIVER
+  FAMILY
+}
+
+enum Wellbeing {
+  GOOD
+  OKAY
+  UNWELL
+}
+
+enum IncidentCategory {
+  FALL
+  MISSED_MEDICATION
+  HEALTH_CHANGE
+  INJURY
+  SAFETY_CONCERN
+  CAREGIVER_ABSENCE
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum IncidentStatus {
+  OPEN
+  RESOLVED
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -84,6 +125,10 @@ model User {
   visits              Visit[]              @relation("VisitCaregiver")
   openVisit           Visit?               @relation("OpenVisit")
   dailyCalls          DailyCall[]
+  visitReports        VisitReport[]
+  readingsRecorded    HealthReading[]
+  incidentsReported   Incident[]           @relation("IncidentReporter")
+  incidentsResolved   Incident[]           @relation("IncidentResolver")
 
   @@map("users")
 }
@@ -143,6 +188,9 @@ model Patient {
   visits          Visit[]
   displayPairings HomeDisplayPairing[]
   dailyCalls      DailyCall[]
+  visitReports    VisitReport[]
+  readings        HealthReading[]
+  incidents       Incident[]
 
   @@index([organizationId])
   @@map("patients")
@@ -270,11 +318,13 @@ model Visit {
   selfiePath             String?          @unique
   createdAt              DateTime         @default(now())
 
-  patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  caregiver     User           @relation("VisitCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
-  openFor       User?          @relation("OpenVisit", fields: [openForCaregiverId], references: [id], onDelete: SetNull)
-  shift         Shift?         @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+  patient       Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caregiver     User            @relation("VisitCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
+  openFor       User?           @relation("OpenVisit", fields: [openForCaregiverId], references: [id], onDelete: SetNull)
+  shift         Shift?          @relation(fields: [shiftId], references: [id], onDelete: SetNull)
   surpriseCheck SurpriseCheck?
+  report        VisitReport?
+  readings      HealthReading[]
 
   @@index([patientId, checkInAt])
   @@index([caregiverId, checkInAt])
@@ -328,6 +378,67 @@ model DailyCall {
 
   @@index([patientId, callDate])
   @@map("daily_calls")
+}
+
+model VisitReport {
+  id        String    @id @default(uuid()) @db.Uuid
+  visitId   String    @unique @db.Uuid
+  patientId String    @db.Uuid
+  authorId  String    @db.Uuid
+  wellbeing Wellbeing
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  visit   Visit   @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([patientId, createdAt])
+  @@map("visit_reports")
+}
+
+model HealthReading {
+  id             String        @id @default(uuid()) @db.Uuid
+  patientId      String        @db.Uuid
+  type           ReadingType
+  value          Float
+  secondaryValue Float?
+  unit           String
+  measuredAt     DateTime
+  source         ReadingSource
+  recordedById   String        @db.Uuid
+  visitId        String?       @db.Uuid
+  createdAt      DateTime      @default(now())
+
+  patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  recordedBy User    @relation(fields: [recordedById], references: [id], onDelete: Restrict)
+  visit      Visit?  @relation(fields: [visitId], references: [id], onDelete: SetNull)
+
+  @@index([patientId, type, measuredAt])
+  @@map("health_readings")
+}
+
+model Incident {
+  id             String           @id @default(uuid()) @db.Uuid
+  patientId      String           @db.Uuid
+  reportedById   String           @db.Uuid
+  category       IncidentCategory
+  severity       IncidentSeverity
+  description    String
+  occurredAt     DateTime
+  status         IncidentStatus   @default(OPEN)
+  resolutionNote String?
+  resolvedAt     DateTime?
+  resolvedById   String?          @db.Uuid
+  createdAt      DateTime         @default(now())
+
+  patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  reportedBy User    @relation("IncidentReporter", fields: [reportedById], references: [id], onDelete: Restrict)
+  resolvedBy User?   @relation("IncidentResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([patientId, status, occurredAt])
+  @@map("incidents")
 }
 
 model AuditEvent {
