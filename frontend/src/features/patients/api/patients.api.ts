@@ -18,6 +18,7 @@ export interface Patient {
   relationship: CareRelationship;
   timeZone: string;
   isHomeDisplayConfigured: boolean;
+  phone: string | null;
   createdAt: string;
   updatedAt: string;
 }

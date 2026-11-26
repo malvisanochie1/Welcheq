@@ -1,4 +1,9 @@
-import { CARE_RELATIONSHIP, CHECKLIST_STATUS, PROOF_METHOD } from '@welcheq/shared';
+import {
+  CARE_RELATIONSHIP,
+  CHECKLIST_STATUS,
+  FAMILY_RELATIONSHIPS,
+  PROOF_METHOD,
+} from '@welcheq/shared';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarClock, ClipboardList, ListChecks, ShieldCheck } from 'lucide-react-native';
 import { View } from 'react-native';
@@ -13,6 +18,7 @@ import { CheckInPanel } from '@/features/attendance/components/CheckInPanel';
 import { StatusChip } from '@/features/care-plan/components/StatusChip';
 import { useChecklistSummary } from '@/features/care-plan/hooks/use-checklist-summary';
 import { CareTeamSection } from '@/features/care-team/components/CareTeamSection';
+import { DailyCallCard } from '@/features/daily-call/components/DailyCallCard';
 import { usePatient } from '@/features/patients/hooks/use-patients';
 import { ageFromDateOfBirth } from '@/features/patients/lib/age';
 
@@ -62,6 +68,7 @@ export default function PatientScreen() {
   ).map((option) => option.title);
   const params = { patientId };
   const isCaregiver = patient.data.relationship === CARE_RELATIONSHIP.CAREGIVER;
+  const isFamily = (FAMILY_RELATIONSHIPS as readonly string[]).includes(patient.data.relationship);
 
   return (
     <Screen contentClassName="gap-6">
@@ -81,6 +88,8 @@ export default function PatientScreen() {
           requiresSelfie={proofSettings.methods.includes(PROOF_METHOD.SELFIE)}
         />
       )}
+
+      {isFamily && <DailyCallCard patientId={patientId} relationship={patient.data.relationship} />}
 
       <View className="gap-3">
         <LinkCard
