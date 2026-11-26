@@ -29,4 +29,35 @@ services:
       - key: SUPABASE_SECRET_KEY
         sync: false
       - key: CORS_ORIGINS
-        sync: false
+        value: https://welcheq-web.onrender.com,http://localhost:8081
+
+  - type: web
+    name: welcheq-web
+    runtime: static
+    branch: main
+    buildCommand: npm ci --include=dev --workspace frontend --workspace shared && npm run export:web --workspace frontend -- --output-dir dist
+    staticPublishPath: frontend/dist
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - frontend/**
+        - shared/**
+        - package-lock.json
+        - render.yaml
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /_expo/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
