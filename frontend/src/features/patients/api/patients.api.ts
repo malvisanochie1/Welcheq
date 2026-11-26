@@ -16,6 +16,7 @@ export interface Patient {
   homeLocation: { latitude: number; longitude: number };
   proofSettings: { methods: ProofMethod[]; geofenceRadiusMeters: number };
   relationship: CareRelationship;
+  timeZone: string;
   createdAt: string;
   updatedAt: string;
 }

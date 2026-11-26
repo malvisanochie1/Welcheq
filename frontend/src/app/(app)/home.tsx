@@ -1,4 +1,4 @@
-import { PATIENT_MANAGER_ROLES } from '@welcheq/shared';
+import { PATIENT_MANAGER_ROLES, USER_ROLE } from '@welcheq/shared';
 import { router } from 'expo-router';
 import { Settings } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
@@ -8,7 +8,11 @@ import { ErrorState } from '@/components/layout/ErrorState';
 import { Screen } from '@/components/layout/Screen';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { Button } from '@/components/ui/Button';
+import { Text } from '@/components/ui/Text';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { ShiftList } from '@/features/attendance/components/ShiftList';
+import { useMyShifts } from '@/features/attendance/hooks/use-attendance';
+import { useDateRange } from '@/features/attendance/hooks/use-local-dates';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
 import { PatientCard } from '@/features/patients/components/PatientCard';
 import { usePatients } from '@/features/patients/hooks/use-patients';
@@ -35,6 +39,8 @@ export default function HomeScreen() {
   const { data: profile } = useOwnProfile();
   const patients = usePatients();
   const isWide = useIsWideLayout();
+  const isCaregiver = profile?.role === USER_ROLE.CAREGIVER;
+  const todaysVisits = useMyShifts(useDateRange(0, 0), isCaregiver);
   const canRegister = (PATIENT_MANAGER_ROLES as readonly string[]).includes(profile?.role ?? '');
   const emptyCopy = canRegister ? EMPTY_COPY.manager : EMPTY_COPY.caregiver;
 
@@ -70,6 +76,13 @@ export default function HomeScreen() {
           )
         }
       />
+
+      {isCaregiver && todaysVisits.data && todaysVisits.data.length > 0 && (
+        <View className="gap-3">
+          <Text variant="heading">Today's visits</Text>
+          <ShiftList shifts={todaysVisits.data} titleFor={(shift) => shift.patientName} />
+        </View>
+      )}
 
       {patients.isPending ? (
         <View className="gap-3">

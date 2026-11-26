@@ -14,6 +14,7 @@ export function toPatientResponse(patient: PatientRecord, relationship: CareRela
       geofenceRadiusMeters: patient.geofenceRadiusMeters,
     },
     relationship,
+    timeZone: patient.timeZone,
     createdAt: patient.createdAt,
     updatedAt: patient.updatedAt,
   };

@@ -39,7 +39,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
-    "tailwindcss": "^3.4.19"
+    "tailwindcss": "^3.4.19",
+    "vitest": "^5.1.2"
   },
   "scripts": {
     "start": "expo start",
@@ -47,7 +48,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "export:web": "expo export --platform web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "private": true,
   "description": "Welcheq app for Android, iOS and web."

@@ -11,6 +11,7 @@ import { INVITE_COPY, RELATIONSHIP_LABEL } from '@/config/care-team';
 import type { Patient } from '@/features/patients/api/patients.api';
 import { ApiError } from '@/lib/api-client';
 import { cn } from '@/lib/cn';
+import { formatShortDate } from '@/lib/format-date';
 import {
   useCareTeam,
   usePendingInvitations,
@@ -19,9 +20,6 @@ import {
 } from '../hooks/use-care-team';
 
 const SKELETON_HEIGHT = 64;
-
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 
 export interface CareTeamSectionProps {
   patient: Patient;
@@ -122,7 +120,7 @@ export function CareTeamSection({ patient }: CareTeamSectionProps) {
             >
               <Text variant="caption" className="flex-1">
                 {RELATIONSHIP_LABEL[invitation.relationship]} · code expires{' '}
-                {formatDate(invitation.expiresAt)}
+                {formatShortDate(invitation.expiresAt)}
               </Text>
               <Button
                 label="Cancel"

@@ -5,14 +5,12 @@ import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { CATEGORY_DETAILS, STATUS_DETAILS } from '@/config/care-plan';
 import { cn } from '@/lib/cn';
+import { formatTime } from '@/lib/format-date';
 import { palette } from '@/theme';
 import type { ChecklistItem } from '../api/care-plan.api';
 import { StatusChip } from './StatusChip';
 
 const ICON_SIZE = 20;
-
-const formatTime = (iso: string) =>
-  new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
 export interface ChecklistItemRowProps {
   item: ChecklistItem;

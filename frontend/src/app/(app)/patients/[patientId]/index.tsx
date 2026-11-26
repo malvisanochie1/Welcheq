@@ -1,6 +1,6 @@
-import { CHECKLIST_STATUS } from '@welcheq/shared';
+import { CARE_RELATIONSHIP, CHECKLIST_STATUS } from '@welcheq/shared';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ClipboardList, ListChecks, ShieldCheck } from 'lucide-react-native';
+import { CalendarClock, ClipboardList, ListChecks, ShieldCheck } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { ErrorState } from '@/components/layout/ErrorState';
@@ -9,6 +9,7 @@ import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { LinkCard } from '@/components/ui/LinkCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { PROOF_METHOD_OPTIONS } from '@/config/proof-methods';
+import { CheckInPanel } from '@/features/attendance/components/CheckInPanel';
 import { StatusChip } from '@/features/care-plan/components/StatusChip';
 import { useChecklistSummary } from '@/features/care-plan/hooks/use-checklist-summary';
 import { CareTeamSection } from '@/features/care-team/components/CareTeamSection';
@@ -60,6 +61,7 @@ export default function PatientScreen() {
     proofSettings.methods.includes(option.method),
   ).map((option) => option.title);
   const params = { patientId };
+  const isCaregiver = patient.data.relationship === CARE_RELATIONSHIP.CAREGIVER;
 
   return (
     <Screen contentClassName="gap-6">
@@ -71,7 +73,15 @@ export default function PatientScreen() {
           .join(' · ')}
       />
 
+      {isCaregiver && <CheckInPanel patientId={patientId} patientName={fullName} />}
+
       <View className="gap-3">
+        <LinkCard
+          icon={CalendarClock}
+          title="Visits"
+          subtitle="Schedule, arrivals and departures"
+          onPress={() => router.push({ pathname: '/patients/[patientId]/visits', params })}
+        />
         <LinkCard
           icon={ListChecks}
           title="Today's checklist"
