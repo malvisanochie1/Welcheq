@@ -22,7 +22,16 @@ jobs:
     steps:
       - name: Check database connection is configured
         id: ready
-        run: echo "ok=$([ -n "$DIRECT_DATABASE_URL" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ -n "$DIRECT_DATABASE_URL" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "::error::Repository secret DIRECT_DATABASE_URL is not set"
+            exit 1
+          else
+            echo "::warning::Skipping migrations: DIRECT_DATABASE_URL is not set"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - if: steps.ready.outputs.ok == 'true'
         uses: actions/checkout@v4
