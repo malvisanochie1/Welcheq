@@ -1,5 +1,6 @@
 import {
   INCIDENT_CATEGORY,
+  INCIDENT_CATEGORY_LABELS,
   INCIDENT_SEVERITY,
   incidentInputSchema,
   REPORT_RULES,
@@ -14,11 +15,7 @@ import { Chip } from '@/components/ui/Chip';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Text } from '@/components/ui/Text';
 import { TextField } from '@/components/ui/TextField';
-import {
-  INCIDENT_CATEGORY_LABELS,
-  INCIDENT_SEVERITY_DETAILS,
-  INCIDENT_TIMING_OPTIONS,
-} from '@/config/incidents';
+import { INCIDENT_SEVERITY_DETAILS, INCIDENT_TIMING_OPTIONS } from '@/config/incidents';
 import { ApiError } from '@/lib/api-client';
 import { useReportIncident } from '../hooks/use-incidents';
 

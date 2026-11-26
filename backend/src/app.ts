@@ -13,6 +13,7 @@ import { homeDisplayRouter } from '@/modules/home-display/home-display.routes';
 import { capabilitiesRouter } from '@/modules/health/capabilities.routes';
 import { healthRouter } from '@/modules/health/health.routes';
 import { invitationRouter } from '@/modules/invitations/invitation.routes';
+import { notificationRouter } from '@/modules/notifications/notification.routes';
 import { patientRouter } from '@/modules/patients/patient.routes';
 import { profileRouter } from '@/modules/profile/profile.routes';
 
@@ -35,6 +36,7 @@ export function createApp() {
   app.use('/v1/patients', patientRouter);
   app.use('/v1/invitations', invitationRouter);
   app.use('/v1/home-display', homeDisplayRouter);
+  app.use('/v1/notifications', notificationRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -1,19 +1,4 @@
-import {
-  INCIDENT_CATEGORY,
-  INCIDENT_SEVERITY,
-  type IncidentCategory,
-  type IncidentSeverity,
-} from '@welcheq/shared';
-
-export const INCIDENT_CATEGORY_LABELS: Readonly<Record<IncidentCategory, string>> = {
-  [INCIDENT_CATEGORY.FALL]: 'Fall',
-  [INCIDENT_CATEGORY.MISSED_MEDICATION]: 'Missed medicine',
-  [INCIDENT_CATEGORY.HEALTH_CHANGE]: 'Health change',
-  [INCIDENT_CATEGORY.INJURY]: 'Injury',
-  [INCIDENT_CATEGORY.SAFETY_CONCERN]: 'Safety concern',
-  [INCIDENT_CATEGORY.CAREGIVER_ABSENCE]: 'Caregiver absent',
-  [INCIDENT_CATEGORY.OTHER]: 'Something else',
-};
+import { INCIDENT_SEVERITY, type IncidentSeverity } from '@welcheq/shared';
 
 export const INCIDENT_SEVERITY_DETAILS: Readonly<
   Record<IncidentSeverity, { label: string; containerClassName: string; textClassName: string }>

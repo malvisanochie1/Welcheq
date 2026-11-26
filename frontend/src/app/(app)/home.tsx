@@ -14,6 +14,7 @@ import { ShiftList } from '@/features/attendance/components/ShiftList';
 import { useMyShifts } from '@/features/attendance/hooks/use-attendance';
 import { useDateRange } from '@/features/attendance/hooks/use-local-dates';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
+import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { PatientCard } from '@/features/patients/components/PatientCard';
 import { usePatients } from '@/features/patients/hooks/use-patients';
 import { useIsWideLayout } from '@/hooks/use-is-wide-layout';
@@ -64,15 +65,18 @@ export default function HomeScreen() {
         subtitle={profile ? `Hello, ${profile.fullName.split(' ')[0]}` : undefined}
         action={
           !isWide && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Settings"
-              onPress={() => router.push('/settings')}
-              className="items-center justify-center"
-              style={{ minWidth: touchTarget.min, minHeight: touchTarget.min }}
-            >
-              <Settings size={ICON_SIZE} color={palette.ink} />
-            </Pressable>
+            <View className="flex-row">
+              <NotificationBell />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Settings"
+                onPress={() => router.push('/settings')}
+                className="items-center justify-center"
+                style={{ minWidth: touchTarget.min, minHeight: touchTarget.min }}
+              >
+                <Settings size={ICON_SIZE} color={palette.ink} />
+              </Pressable>
+            </View>
           )
         }
       />

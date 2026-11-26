@@ -18,6 +18,7 @@ import {
 import type { z } from 'zod';
 
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
+import { careTeamNotices } from '@/modules/notifications/care-team-notices';
 import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
@@ -182,17 +183,29 @@ export const dailyCallService = {
       isMismatch: mismatches.has(answer),
     }));
 
-    const call = await prisma.dailyCall.create({
-      data: {
-        patientId,
-        callerId: user.id,
-        callDate: toDateColumn(input.date),
-        outcome: input.outcome,
-        answers,
-        mismatchCount: input.outcome === CALL_OUTCOME.REACHED ? mismatches.size : 0,
-        note: input.note || null,
-      },
-      select: CALL_FIELDS,
+    const mismatchCount = input.outcome === CALL_OUTCOME.REACHED ? mismatches.size : 0;
+    const call = await prisma.$transaction(async (tx) => {
+      const created = await tx.dailyCall.create({
+        data: {
+          patientId,
+          callerId: user.id,
+          callDate: toDateColumn(input.date),
+          outcome: input.outcome,
+          answers,
+          mismatchCount,
+          note: input.note || null,
+        },
+        select: CALL_FIELDS,
+      });
+      if (mismatchCount > 0) {
+        await careTeamNotices.callMismatch(tx, {
+          id: created.id,
+          patientId,
+          callerId: user.id,
+          mismatchCount,
+        });
+      }
+      return created;
     });
 
     return toCallResponse(call);

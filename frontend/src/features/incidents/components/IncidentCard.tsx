@@ -1,11 +1,11 @@
-import { INCIDENT_STATUS } from '@welcheq/shared';
+import { INCIDENT_CATEGORY_LABELS, INCIDENT_STATUS } from '@welcheq/shared';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
-import { INCIDENT_CATEGORY_LABELS, INCIDENT_SEVERITY_DETAILS } from '@/config/incidents';
+import { INCIDENT_SEVERITY_DETAILS } from '@/config/incidents';
 import { cn } from '@/lib/cn';
 import { formatDay, formatTime } from '@/lib/format-date';
 import type { Incident } from '../api/incidents.api';

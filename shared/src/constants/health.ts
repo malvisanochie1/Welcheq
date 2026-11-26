@@ -62,6 +62,16 @@ export const INCIDENT_CATEGORY = {
 
 export type IncidentCategory = (typeof INCIDENT_CATEGORY)[keyof typeof INCIDENT_CATEGORY];
 
+export const INCIDENT_CATEGORY_LABELS: Readonly<Record<IncidentCategory, string>> = {
+  [INCIDENT_CATEGORY.FALL]: 'Fall',
+  [INCIDENT_CATEGORY.MISSED_MEDICATION]: 'Missed medicine',
+  [INCIDENT_CATEGORY.HEALTH_CHANGE]: 'Health change',
+  [INCIDENT_CATEGORY.INJURY]: 'Injury',
+  [INCIDENT_CATEGORY.SAFETY_CONCERN]: 'Safety concern',
+  [INCIDENT_CATEGORY.CAREGIVER_ABSENCE]: 'Caregiver absent',
+  [INCIDENT_CATEGORY.OTHER]: 'Something else',
+};
+
 export const INCIDENT_SEVERITY = {
   LOW: 'LOW',
   MEDIUM: 'MEDIUM',

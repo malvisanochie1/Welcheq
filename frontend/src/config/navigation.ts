@@ -1,15 +1,23 @@
 import type { Href } from 'expo-router';
-import { HeartHandshake, Settings, type LucideIcon } from 'lucide-react-native';
+import { Bell, HeartHandshake, Settings, type LucideIcon } from 'lucide-react-native';
 
 export interface NavigationItem {
   label: string;
   href: Href;
   matchPrefix: string;
   icon: LucideIcon;
+  showsUnreadCount?: boolean;
 }
 
 export const PRIMARY_NAVIGATION: readonly NavigationItem[] = [
   { label: 'Loved ones', href: '/home', matchPrefix: '/home', icon: HeartHandshake },
+  {
+    label: 'Notifications',
+    href: '/notifications',
+    matchPrefix: '/notifications',
+    icon: Bell,
+    showsUnreadCount: true,
+  },
   { label: 'Settings', href: '/settings', matchPrefix: '/settings', icon: Settings },
 ];
 

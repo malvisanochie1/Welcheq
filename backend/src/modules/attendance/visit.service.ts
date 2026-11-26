@@ -22,6 +22,7 @@ import type { z } from 'zod';
 
 import { Prisma } from '@/generated/prisma/client';
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
+import { careTeamNotices } from '@/modules/notifications/care-team-notices';
 import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
 import { secureRandomFraction } from '@/lib/secure-codes';
@@ -163,6 +164,12 @@ export const visitService = {
           entityId: created.id,
           metadata: { patientId, flags },
         });
+        await careTeamNotices.caregiverArrived(tx, {
+          id: created.id,
+          patientId,
+          caregiverId: user.id,
+          isLate: flags.includes(ATTENDANCE_FLAG.LATE_ARRIVAL),
+        });
         return created;
       });
       return toVisitResponse(visit);
@@ -225,6 +232,12 @@ export const visitService = {
         entityType: 'visit',
         entityId: visit.id,
         metadata: { patientId, flags: [...flags] },
+      });
+      await careTeamNotices.caregiverLeft(tx, {
+        id: visit.id,
+        patientId,
+        caregiverId: user.id,
+        leftEarly: flags.has(ATTENDANCE_FLAG.EARLY_DEPARTURE),
       });
       return updated;
     });

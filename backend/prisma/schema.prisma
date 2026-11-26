@@ -102,6 +102,17 @@ enum AllergySeverity {
   SEVERE
 }
 
+enum NotificationKind {
+  CAREGIVER_ARRIVED
+  CAREGIVER_LEFT
+  VISIT_MISSED
+  VISIT_REPORT
+  INCIDENT_REPORTED
+  INCIDENT_RESOLVED
+  CALL_MISMATCH
+  MESSAGE
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -139,6 +150,7 @@ model User {
   allergiesAdded      Allergy[]            @relation("AllergyAuthor")
   conditionsAdded     Condition[]          @relation("ConditionAuthor")
   documentsUploaded   HealthDocument[]     @relation("DocumentUploader")
+  notifications       Notification[]
 
   @@map("users")
 }
@@ -205,6 +217,7 @@ model Patient {
   allergies       Allergy[]
   conditions      Condition[]
   documents       HealthDocument[]
+  notifications   Notification[]
 
   @@index([organizationId])
   @@map("patients")
@@ -520,6 +533,26 @@ model HealthDocument {
 
   @@index([patientId, createdAt])
   @@map("health_documents")
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  patientId String           @db.Uuid
+  kind      NotificationKind
+  title     String
+  body      String
+  entityId  String?          @db.Uuid
+  dedupeKey String
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 model AuditEvent {

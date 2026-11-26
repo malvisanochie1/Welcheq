@@ -1,0 +1,19 @@
+export const NOTIFICATION_KIND = {
+  CAREGIVER_ARRIVED: 'CAREGIVER_ARRIVED',
+  CAREGIVER_LEFT: 'CAREGIVER_LEFT',
+  VISIT_MISSED: 'VISIT_MISSED',
+  VISIT_REPORT: 'VISIT_REPORT',
+  INCIDENT_REPORTED: 'INCIDENT_REPORTED',
+  INCIDENT_RESOLVED: 'INCIDENT_RESOLVED',
+  CALL_MISMATCH: 'CALL_MISMATCH',
+  MESSAGE: 'MESSAGE',
+} as const;
+
+export type NotificationKind = (typeof NOTIFICATION_KIND)[keyof typeof NOTIFICATION_KIND];
+
+export const NOTIFICATION_RULES = {
+  PAGE_SIZE: 50,
+  /** Missed visits older than this are not announced; the visit history still shows them. */
+  MISSED_VISIT_LOOKBACK_HOURS: 24,
+  KEEP_DAYS: 60,
+} as const;

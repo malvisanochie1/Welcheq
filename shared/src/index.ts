@@ -11,6 +11,7 @@ export * from './constants/health';
 export * from './constants/health-profile';
 export * from './constants/invitations';
 export * from './constants/limits';
+export * from './constants/notifications';
 export * from './constants/proof';
 export * from './constants/roles';
 export * from './geo/distance';

@@ -14,6 +14,7 @@ import type { z } from 'zod';
 
 import type { Prisma } from '@/generated/prisma/client';
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
+import { careTeamNotices } from '@/modules/notifications/care-team-notices';
 import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
@@ -116,6 +117,12 @@ export const healthRecordService = {
       if (readingRows.length > 0) {
         await tx.healthReading.createMany({ data: readingRows });
       }
+      await careTeamNotices.visitReport(tx, {
+        visitId,
+        patientId,
+        authorId: user.id,
+        wellbeing: input.wellbeing,
+      });
       if (previous) {
         await recordAuditEvent(tx, {
           actorId: user.id,

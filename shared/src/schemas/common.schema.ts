@@ -32,3 +32,8 @@ export const paginationSchema = z.object({
 });
 
 export type Pagination = z.infer<typeof paginationSchema>;
+
+export const markNotificationsReadSchema = z.union([
+  z.strictObject({ all: z.literal(true) }),
+  z.strictObject({ ids: z.array(z.uuid()).min(1).max(100) }),
+]);

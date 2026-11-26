@@ -3,6 +3,7 @@ import type { PrismaClient } from '@/generated/prisma/client';
 /** Deletes children before parents so foreign keys never block the reset. */
 export async function resetDatabase(prisma: PrismaClient) {
   await prisma.auditEvent.deleteMany();
+  await prisma.notification.deleteMany();
   await prisma.healthDocument.deleteMany();
   await prisma.medication.deleteMany();
   await prisma.allergy.deleteMany();

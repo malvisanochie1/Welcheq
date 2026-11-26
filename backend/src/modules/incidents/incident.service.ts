@@ -1,4 +1,5 @@
 import {
+  INCIDENT_CATEGORY_LABELS,
   INCIDENT_STATUS,
   PATIENT_EDITOR_RELATIONSHIPS,
   type IncidentInput,
@@ -6,6 +7,7 @@ import {
 } from '@welcheq/shared';
 
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
+import { careTeamNotices } from '@/modules/notifications/care-team-notices';
 import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
@@ -72,6 +74,12 @@ export const incidentService = {
         entityId: created.id,
         metadata: { patientId, category: input.category, severity: input.severity },
       });
+      await careTeamNotices.incidentReported(tx, {
+        id: created.id,
+        patientId,
+        reporterId: user.id,
+        categoryLabel: INCIDENT_CATEGORY_LABELS[input.category],
+      });
       return created;
     });
 
@@ -110,6 +118,11 @@ export const incidentService = {
         action: AUDIT_ACTION.INCIDENT_RESOLVED,
         entityType: 'incident',
         entityId: incidentId,
+      });
+      await careTeamNotices.incidentResolved(tx, {
+        id: incidentId,
+        patientId,
+        resolverId: user.id,
       });
     });
 

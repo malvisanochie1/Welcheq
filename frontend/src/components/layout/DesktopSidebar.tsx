@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { BRAND } from '@/config/brand';
 import { NAVIGATION_ALIASES, PRIMARY_NAVIGATION } from '@/config/navigation';
 import { signOut } from '@/features/auth/api/auth.api';
+import { useUnreadNotificationCount } from '@/features/notifications/hooks/use-notifications';
 import { cn } from '@/lib/cn';
 import { layout, palette } from '@/theme';
 
@@ -18,6 +19,7 @@ function resolveSection(pathname: string): string {
 
 export function DesktopSidebar() {
   const section = resolveSection(usePathname());
+  const unread = useUnreadNotificationCount();
 
   return (
     <View
@@ -45,9 +47,19 @@ export function DesktopSidebar() {
                 )}
               >
                 <Icon size={ICON_SIZE} color={isActive ? palette.primary : palette['ink-muted']} />
-                <Text variant="label" className={cn('text-base', isActive && 'text-primary')}>
+                <Text
+                  variant="label"
+                  className={cn('flex-1 text-base', isActive && 'text-primary')}
+                >
                   {item.label}
                 </Text>
+                {item.showsUnreadCount && unread > 0 && (
+                  <View className="min-w-6 items-center rounded-full bg-danger px-2 py-0.5">
+                    <Text variant="label" className="text-xs text-on-primary">
+                      {unread}
+                    </Text>
+                  </View>
+                )}
               </Pressable>
             );
           })}
