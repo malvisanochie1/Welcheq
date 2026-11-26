@@ -44,10 +44,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberships     OrganizationMember[]
-  patientAccess   PatientAccess[]
-  patientsCreated Patient[]            @relation("PatientCreatedBy")
-  auditEvents     AuditEvent[]
+  memberships         OrganizationMember[]
+  patientAccess       PatientAccess[]
+  patientsCreated     Patient[]            @relation("PatientCreatedBy")
+  auditEvents         AuditEvent[]
+  invitationsSent     Invitation[]         @relation("InvitationCreatedBy")
+  invitationsAccepted Invitation[]         @relation("InvitationAcceptedBy")
 
   @@map("users")
 }
@@ -97,6 +99,7 @@ model Patient {
   organization Organization?   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   createdBy    User            @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   access       PatientAccess[]
+  invitations  Invitation[]
 
   @@index([organizationId])
   @@map("patients")
@@ -117,6 +120,26 @@ model PatientAccess {
   @@unique([patientId, userId])
   @@index([userId])
   @@map("patient_access")
+}
+
+model Invitation {
+  id           String           @id @default(uuid()) @db.Uuid
+  patientId    String           @db.Uuid
+  relationship CareRelationship
+  codeHash     String           @unique
+  createdById  String           @db.Uuid
+  createdAt    DateTime         @default(now())
+  expiresAt    DateTime
+  acceptedById String?          @db.Uuid
+  acceptedAt   DateTime?
+  revokedAt    DateTime?
+
+  patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdBy  User    @relation("InvitationCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  acceptedBy User?   @relation("InvitationAcceptedBy", fields: [acceptedById], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@map("invitations")
 }
 
 model AuditEvent {

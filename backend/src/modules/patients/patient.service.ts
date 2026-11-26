@@ -2,7 +2,6 @@ import {
   CARE_RELATIONSHIP,
   PATIENT_EDITOR_RELATIONSHIPS,
   PATIENT_MANAGER_ROLES,
-  type CareRelationship,
   type ProofSettingsInput,
   type UpdatePatientInput,
   type createPatientSchema,
@@ -14,6 +13,7 @@ import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
 import { toPatientResponse } from './patient.mapper';
+import { requirePatientAccess } from './patient-access';
 import { patientRepository } from './patient.repository';
 
 type CreatePatientData = z.output<typeof createPatientSchema>;
@@ -22,27 +22,6 @@ const ENTITY_TYPE = 'patient';
 
 const toDate = (isoDate: string | null | undefined) =>
   isoDate === undefined ? undefined : isoDate === null ? null : new Date(isoDate);
-
-/**
- * Patients the user cannot see answer as not found, so ids cannot be probed to learn
- * which patients exist.
- */
-async function requireAccess(
-  user: ActingUser,
-  patientId: string,
-  allowed?: readonly CareRelationship[],
-): Promise<CareRelationship> {
-  const access = await patientRepository.findAccess(user.id, patientId);
-
-  if (!access) {
-    throw HttpError.notFound('Patient not found');
-  }
-  if (allowed && !allowed.includes(access.relationship)) {
-    throw HttpError.forbidden('Only the family member who manages this patient can do this');
-  }
-
-  return access.relationship;
-}
 
 export const patientService = {
   async create(user: ActingUser, input: CreatePatientData) {
@@ -83,12 +62,12 @@ export const patientService = {
   },
 
   async get(user: ActingUser, patientId: string) {
-    const relationship = await requireAccess(user, patientId);
+    const relationship = await requirePatientAccess(user, patientId);
     return toPatientResponse(await patientRepository.findById(patientId), relationship);
   },
 
   async update(user: ActingUser, patientId: string, input: UpdatePatientInput) {
-    const relationship = await requireAccess(user, patientId, PATIENT_EDITOR_RELATIONSHIPS);
+    const relationship = await requirePatientAccess(user, patientId, PATIENT_EDITOR_RELATIONSHIPS);
 
     const patient = await prisma.$transaction(async (tx) => {
       const updated = await patientRepository.update(tx, patientId, {
@@ -112,7 +91,7 @@ export const patientService = {
   },
 
   async updateProofSettings(user: ActingUser, patientId: string, input: ProofSettingsInput) {
-    const relationship = await requireAccess(user, patientId, PATIENT_EDITOR_RELATIONSHIPS);
+    const relationship = await requirePatientAccess(user, patientId, PATIENT_EDITOR_RELATIONSHIPS);
 
     const patient = await prisma.$transaction(async (tx) => {
       const updated = await patientRepository.update(tx, patientId, {

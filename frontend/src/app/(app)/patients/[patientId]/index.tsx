@@ -9,6 +9,7 @@ import { PressableScale } from '@/components/ui/PressableScale';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Text } from '@/components/ui/Text';
 import { PROOF_METHOD_OPTIONS } from '@/config/proof-methods';
+import { CareTeamSection } from '@/features/care-team/components/CareTeamSection';
 import { usePatient } from '@/features/patients/hooks/use-patients';
 import { ageFromDateOfBirth } from '@/features/patients/lib/age';
 import { palette } from '@/theme';
@@ -77,6 +78,8 @@ export default function PatientScreen() {
         </View>
         <ChevronRight size={ICON_SIZE} color={palette['ink-subtle']} />
       </PressableScale>
+
+      <CareTeamSection patient={patient.data} />
     </Screen>
   );
 }

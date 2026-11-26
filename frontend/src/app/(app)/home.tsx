@@ -49,6 +49,7 @@ export default function HomeScreen() {
   }
 
   const addPatient = () => router.push('/patients/new');
+  const joinWithCode = () => router.push('/join');
 
   return (
     <Screen isWide={isWide} contentClassName="gap-6">
@@ -80,7 +81,16 @@ export default function HomeScreen() {
         <EmptyState
           title={emptyCopy.title}
           message={emptyCopy.message}
-          action={canRegister && <Button label="Add a loved one" onPress={addPatient} />}
+          action={
+            <View className="gap-2">
+              {canRegister && <Button label="Add a loved one" onPress={addPatient} />}
+              <Button
+                label="Join with a code"
+                variant={canRegister ? 'ghost' : 'primary'}
+                onPress={joinWithCode}
+              />
+            </View>
+          }
         />
       ) : (
         <View className="gap-4">
@@ -99,11 +109,10 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
-          {canRegister && (
-            <View className={cn(isWide && 'self-start')}>
-              <Button label="Add another" variant="secondary" onPress={addPatient} />
-            </View>
-          )}
+          <View className={cn('gap-2', isWide && 'flex-row self-start')}>
+            {canRegister && <Button label="Add another" variant="secondary" onPress={addPatient} />}
+            <Button label="Join with a code" variant="ghost" onPress={joinWithCode} />
+          </View>
         </View>
       )}
     </Screen>

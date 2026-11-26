@@ -20,3 +20,11 @@ export const writeRateLimit = rateLimit({
   keyGenerator: (req) => req.identity?.userId ?? ipKeyGenerator(req.ip ?? ''),
   handler: (_req, _res, next) => next(rejectWithRateLimitError()),
 });
+
+export const invitationAcceptRateLimit = rateLimit({
+  ...RATE_LIMITS.INVITATION_ACCEPT,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  keyGenerator: (req) => req.identity?.userId ?? ipKeyGenerator(req.ip ?? ''),
+  handler: (_req, _res, next) => next(rejectWithRateLimitError()),
+});

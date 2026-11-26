@@ -8,6 +8,7 @@ export const REQUEST_LIMITS = {
 export const RATE_LIMITS = {
   GLOBAL: { windowMs: 15 * MINUTE_MS, limit: 300 },
   WRITE: { windowMs: 15 * MINUTE_MS, limit: 60 },
+  INVITATION_ACCEPT: { windowMs: 15 * MINUTE_MS, limit: 10 },
 } as const;
 
 export const AUTH_TOKEN = {

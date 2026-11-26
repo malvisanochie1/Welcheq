@@ -4,6 +4,10 @@ export const AUDIT_ACTION = {
   PATIENT_CREATED: 'patient.created',
   PATIENT_UPDATED: 'patient.updated',
   PATIENT_PROOF_SETTINGS_UPDATED: 'patient.proof_settings_updated',
+  INVITATION_CREATED: 'invitation.created',
+  INVITATION_REVOKED: 'invitation.revoked',
+  INVITATION_ACCEPTED: 'invitation.accepted',
+  MEMBER_REMOVED: 'member.removed',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];

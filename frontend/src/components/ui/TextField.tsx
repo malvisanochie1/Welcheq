@@ -37,7 +37,7 @@ export function TextField({
           accessibilityLabel={label}
           placeholderTextColor={palette['ink-subtle']}
           className="flex-1 py-3 font-body text-base text-ink"
-          style={{ minWidth: 0 }}
+          style={{ minWidth: 0, outlineWidth: 0 }}
           onFocus={(event) => {
             setIsFocused(true);
             onFocus?.(event);

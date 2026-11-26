@@ -1,7 +1,9 @@
 import { publicEnv } from '@/config/env';
 import { supabase } from './supabase';
 
-const REQUEST_TIMEOUT_MS = 15_000;
+/** Long enough to cover the free API host waking from sleep. */
+const REQUEST_TIMEOUT_MS = 30_000;
+const NO_CONTENT = 204;
 
 const NETWORK_ERROR_MESSAGE = 'We could not reach Welcheq. Check your connection and try again.';
 
@@ -27,7 +29,10 @@ async function authorizationHeader(): Promise<Record<string, string>> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export async function apiRequest<T>(path: string, { method = 'GET', body }: RequestOptions = {}) {
+export async function apiRequest<T>(
+  path: string,
+  { method = 'GET', body }: RequestOptions = {},
+): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -43,6 +48,10 @@ export async function apiRequest<T>(path: string, { method = 'GET', body }: Requ
       body: body === undefined ? undefined : JSON.stringify(body),
     });
 
+    if (response.status === NO_CONTENT) {
+      return undefined as T;
+    }
+
     const payload = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -53,7 +62,7 @@ export async function apiRequest<T>(path: string, { method = 'GET', body }: Requ
       );
     }
 
-    return (payload as { data: T }).data;
+    return (payload as { data: T } | null)?.data as T;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
