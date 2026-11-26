@@ -5,7 +5,7 @@ services:
     plan: free
     region: frankfurt
     branch: main
-    buildCommand: npm ci --workspace backend --workspace shared && npm run build --workspace backend
+    buildCommand: npm ci --include=dev --workspace backend --workspace shared && npm run db:generate --workspace backend && npm run build --workspace backend
     startCommand: npm run start --workspace backend
     healthCheckPath: /health
     autoDeploy: true
@@ -14,6 +14,7 @@ services:
         - backend/**
         - shared/**
         - package-lock.json
+        - render.yaml
     envVars:
       - key: NODE_ENV
         value: production

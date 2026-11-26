@@ -43,7 +43,7 @@ jobs:
           cache: npm
 
       - if: steps.ready.outputs.ok == 'true'
-        run: npm ci --workspace backend --workspace shared
+        run: npm ci --include=dev --workspace backend --workspace shared
 
       - if: steps.ready.outputs.ok == 'true'
         name: Apply migrations
