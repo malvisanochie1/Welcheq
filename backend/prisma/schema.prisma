@@ -42,6 +42,14 @@ enum TaskOutcome {
   NOT_DONE
 }
 
+enum AttendanceFlag {
+  LATE_ARRIVAL
+  EARLY_DEPARTURE
+  MOCK_LOCATION
+  RECORDED_OFFLINE
+  CHECKED_OUT_AWAY
+}
+
 enum ProofMethod {
   LOCATION
   SELFIE
@@ -66,6 +74,10 @@ model User {
   invitationsAccepted Invitation[]         @relation("InvitationAcceptedBy")
   careTasksCreated    CareTask[]
   taskRecords         TaskRecord[]
+  shiftsAssigned      Shift[]              @relation("ShiftCaregiver")
+  shiftsCreated       Shift[]              @relation("ShiftCreatedBy")
+  visits              Visit[]              @relation("VisitCaregiver")
+  openVisit           Visit?               @relation("OpenVisit")
 
   @@map("users")
 }
@@ -119,6 +131,8 @@ model Patient {
   invitations  Invitation[]
   careTasks    CareTask[]
   taskRecords  TaskRecord[]
+  shifts       Shift[]
+  visits       Visit[]
 
   @@index([organizationId])
   @@map("patients")
@@ -199,6 +213,60 @@ model TaskRecord {
   @@unique([careTaskId, dueDate])
   @@index([patientId, dueDate])
   @@map("task_records")
+}
+
+model Shift {
+  id          String    @id @default(uuid()) @db.Uuid
+  patientId   String    @db.Uuid
+  caregiverId String    @db.Uuid
+  seriesId    String?   @db.Uuid
+  startsAt    DateTime
+  endsAt      DateTime
+  createdById String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  cancelledAt DateTime?
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caregiver User    @relation("ShiftCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("ShiftCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  visits    Visit[]
+
+  @@index([patientId, startsAt])
+  @@index([caregiverId, startsAt])
+  @@map("shifts")
+}
+
+model Visit {
+  id                     String           @id @default(uuid()) @db.Uuid
+  patientId              String           @db.Uuid
+  caregiverId            String           @db.Uuid
+  shiftId                String?          @db.Uuid
+  /// Set to the caregiver while the visit is open; the unique constraint allows one open visit each.
+  openForCaregiverId     String?          @unique @db.Uuid
+  checkInAt              DateTime
+  checkInClientAt        DateTime
+  checkInLatitude        Float
+  checkInLongitude       Float
+  checkInAccuracyMeters  Float
+  checkInDistanceMeters  Float
+  checkOutAt             DateTime?
+  checkOutClientAt       DateTime?
+  checkOutLatitude       Float?
+  checkOutLongitude      Float?
+  checkOutAccuracyMeters Float?
+  checkOutDistanceMeters Float?
+  flags                  AttendanceFlag[]
+  createdAt              DateTime         @default(now())
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caregiver User    @relation("VisitCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
+  openFor   User?   @relation("OpenVisit", fields: [openForCaregiverId], references: [id], onDelete: SetNull)
+  shift     Shift?  @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+
+  @@index([patientId, checkInAt])
+  @@index([caregiverId, checkInAt])
+  @@index([shiftId])
+  @@map("visits")
 }
 
 model AuditEvent {

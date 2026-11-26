@@ -8,6 +8,7 @@ import { REQUEST_LIMITS } from '@/config/security';
 import { logger } from '@/lib/logger';
 import { errorHandler, notFoundHandler } from '@/middleware/error-handler';
 import { globalRateLimit } from '@/middleware/rate-limit';
+import { myAttendanceRouter } from '@/modules/attendance/attendance.routes';
 import { healthRouter } from '@/modules/health/health.routes';
 import { invitationRouter } from '@/modules/invitations/invitation.routes';
 import { patientRouter } from '@/modules/patients/patient.routes';
@@ -26,6 +27,7 @@ export function createApp() {
   app.use(express.json({ limit: REQUEST_LIMITS.JSON_BODY, strict: true }));
 
   app.use('/health', healthRouter);
+  app.use('/v1/me', myAttendanceRouter);
   app.use('/v1/me', profileRouter);
   app.use('/v1/patients', patientRouter);
   app.use('/v1/invitations', invitationRouter);

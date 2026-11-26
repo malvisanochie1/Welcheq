@@ -10,6 +10,10 @@ export const AUDIT_ACTION = {
   MEMBER_REMOVED: 'member.removed',
   CARE_PLAN_CHANGED: 'care_plan.changed',
   TASK_RECORD_CHANGED: 'task_record.changed',
+  SHIFTS_SCHEDULED: 'shifts.scheduled',
+  SHIFT_CANCELLED: 'shift.cancelled',
+  VISIT_CHECKED_IN: 'visit.checked_in',
+  VISIT_CHECKED_OUT: 'visit.checked_out',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];
