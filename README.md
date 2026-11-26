@@ -8,7 +8,7 @@
 ![iOS](https://img.shields.io/badge/iOS-supported-0F5C5A)
 ![Web](https://img.shields.io/badge/Web-supported-0F5C5A)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-12201F)
-![Version](https://img.shields.io/badge/version-0.1.0-B8692A)
+![Version](https://img.shields.io/badge/version-0.2.0-B8692A)
 
 <img src="docs/screenshots/mobile-welcome.webp" width="230" alt="Welcome screen" />
 &nbsp;&nbsp;
