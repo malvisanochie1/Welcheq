@@ -1,5 +1,6 @@
 import type { Href } from 'expo-router';
-import { Bell, HeartHandshake, Settings, type LucideIcon } from 'lucide-react-native';
+import { PATIENT_MANAGER_ROLES, type UserRole } from '@welcheq/shared';
+import { Bell, ChartColumn, HeartHandshake, Settings, type LucideIcon } from 'lucide-react-native';
 
 export interface NavigationItem {
   label: string;
@@ -7,10 +8,19 @@ export interface NavigationItem {
   matchPrefix: string;
   icon: LucideIcon;
   showsUnreadCount?: boolean;
+  /** Shown only to these roles; everyone sees items without a list. */
+  roles?: readonly UserRole[];
 }
 
 export const PRIMARY_NAVIGATION: readonly NavigationItem[] = [
   { label: 'Loved ones', href: '/home', matchPrefix: '/home', icon: HeartHandshake },
+  {
+    label: 'Overview',
+    href: '/dashboard',
+    matchPrefix: '/dashboard',
+    icon: ChartColumn,
+    roles: PATIENT_MANAGER_ROLES,
+  },
   {
     label: 'Notifications',
     href: '/notifications',

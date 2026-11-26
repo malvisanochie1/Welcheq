@@ -7,6 +7,7 @@ export * from './daily-call/mismatch';
 export * from './constants/attendance';
 export * from './constants/care-plan';
 export * from './constants/daily-call';
+export * from './constants/dashboard';
 export * from './constants/health';
 export * from './constants/health-profile';
 export * from './constants/invitations';

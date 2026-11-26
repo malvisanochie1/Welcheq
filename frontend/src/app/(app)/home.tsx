@@ -126,6 +126,13 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
+          {canRegister && !isWide && patients.data.length > 1 && (
+            <Button
+              label="Overview of everyone"
+              variant="secondary"
+              onPress={() => router.push('/dashboard')}
+            />
+          )}
           <View className={cn('gap-2', isWide && 'flex-row self-start')}>
             {canRegister && <Button label="Add another" variant="secondary" onPress={addPatient} />}
             <Button label="Join with a code" variant="ghost" onPress={joinWithCode} />

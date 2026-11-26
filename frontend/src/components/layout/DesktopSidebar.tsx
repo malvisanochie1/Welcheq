@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { BRAND } from '@/config/brand';
 import { NAVIGATION_ALIASES, PRIMARY_NAVIGATION } from '@/config/navigation';
 import { signOut } from '@/features/auth/api/auth.api';
+import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
 import { useUnreadNotificationCount } from '@/features/notifications/hooks/use-notifications';
 import { cn } from '@/lib/cn';
 import { layout, palette } from '@/theme';
@@ -20,6 +21,10 @@ function resolveSection(pathname: string): string {
 export function DesktopSidebar() {
   const section = resolveSection(usePathname());
   const unread = useUnreadNotificationCount();
+  const { data: profile } = useOwnProfile();
+  const items = PRIMARY_NAVIGATION.filter(
+    (item) => !item.roles || (profile && item.roles.includes(profile.role)),
+  );
 
   return (
     <View
@@ -32,7 +37,7 @@ export function DesktopSidebar() {
           {BRAND.NAME}
         </Text>
         <View className="gap-1">
-          {PRIMARY_NAVIGATION.map((item) => {
+          {items.map((item) => {
             const isActive = section.startsWith(item.matchPrefix);
             const Icon = item.icon;
             return (
