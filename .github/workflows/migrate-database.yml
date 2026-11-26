@@ -1,0 +1,42 @@
+name: Migrate database
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/prisma/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-database
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
+    steps:
+      - name: Check database connection is configured
+        id: ready
+        run: echo "ok=$([ -n "$DIRECT_DATABASE_URL" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - if: steps.ready.outputs.ok == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.ready.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - if: steps.ready.outputs.ok == 'true'
+        run: npm ci --workspace backend --workspace shared
+
+      - if: steps.ready.outputs.ok == 'true'
+        name: Apply migrations
+        working-directory: backend
+        run: npx prisma migrate deploy
