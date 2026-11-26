@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Text } from '@/components/ui/Text';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { CapturedLocation } from '../hooks/use-home-location';
 
 const ICON_SIZE = 18;
@@ -38,6 +38,7 @@ export function HomeLocationPicker({
   onUseCurrentPosition,
   onFindAddress,
 }: HomeLocationPickerProps) {
+  const palette = usePalette();
   return (
     <View className="gap-3">
       <View className="gap-1">

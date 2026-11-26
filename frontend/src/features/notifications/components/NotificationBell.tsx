@@ -3,13 +3,15 @@ import { Bell } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui/Text';
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 import { useUnreadNotificationCount } from '../hooks/use-notifications';
 
 const ICON_SIZE = 22;
 const MAX_SHOWN = 9;
 
 export function NotificationBell() {
+  const palette = usePalette();
   const unread = useUnreadNotificationCount();
 
   return (

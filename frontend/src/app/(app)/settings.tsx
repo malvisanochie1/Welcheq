@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { SIGN_UP_ROLE_OPTIONS } from '@/config/roles';
 import { signOut } from '@/features/auth/api/auth.api';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
+import { DisplaySettings } from '@/features/accessibility/components/DisplaySettings';
 import { BiometricSettings } from '@/features/security/components/BiometricSettings';
 
 export default function SettingsScreen() {
@@ -20,6 +21,15 @@ export default function SettingsScreen() {
         <Text variant="heading">{profile?.fullName}</Text>
         <Text variant="caption">{profile?.email}</Text>
         {roleTitle && <Text variant="caption">{roleTitle}</Text>}
+      </View>
+
+      <View className="gap-3">
+        <Text variant="label" className="text-ink-muted">
+          DISPLAY
+        </Text>
+        <View className="rounded-lg border border-border bg-surface p-4">
+          <DisplaySettings />
+        </View>
       </View>
 
       {Platform.OS !== 'web' && (

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { TextInput, View, type TextInputProps } from 'react-native';
 
 import { cn } from '@/lib/cn';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { Text } from './Text';
 
 export interface TextFieldProps extends Omit<TextInputProps, 'className'> {
@@ -21,6 +21,7 @@ export function TextField({
   onBlur,
   ...inputProps
 }: TextFieldProps) {
+  const palette = usePalette();
   const [isFocused, setIsFocused] = useState(false);
 
   return (

@@ -4,7 +4,8 @@ import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui/Text';
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 
 const ICON_SIZE = 22;
 
@@ -16,6 +17,7 @@ export interface ScreenHeaderProps {
 }
 
 export function ScreenHeader({ title, subtitle, canGoBack = false, action }: ScreenHeaderProps) {
+  const palette = usePalette();
   return (
     <View className="gap-3">
       <View className="flex-row items-center justify-between">

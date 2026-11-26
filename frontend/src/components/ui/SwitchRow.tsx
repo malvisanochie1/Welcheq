@@ -1,6 +1,6 @@
 import { Switch, View } from 'react-native';
 
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { Text } from './Text';
 
 export interface SwitchRowProps {
@@ -18,6 +18,7 @@ export function SwitchRow({
   onValueChange,
   isDisabled = false,
 }: SwitchRowProps) {
+  const palette = usePalette();
   return (
     <View className="min-h-12 flex-row items-center gap-4">
       <View className="flex-1 gap-1">

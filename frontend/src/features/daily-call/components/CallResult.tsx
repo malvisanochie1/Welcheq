@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { RecordedCall } from '../api/daily-call.api';
 
 const ICON_SIZE = 28;
@@ -16,6 +16,7 @@ export interface CallResultProps {
 }
 
 export function CallResult({ call, patientFirstName, onDone }: CallResultProps) {
+  const palette = usePalette();
   const mismatches = call.answers.filter((answer) => answer.isMismatch);
   const isReached = call.outcome === CALL_OUTCOME.REACHED;
   const isClear = isReached && mismatches.length === 0;

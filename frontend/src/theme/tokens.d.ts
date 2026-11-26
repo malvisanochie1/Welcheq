@@ -1,4 +1,4 @@
-export declare const palette: Record<
+export type PaletteName =
   | 'canvas'
   | 'surface'
   | 'surface-muted'
@@ -17,9 +17,15 @@ export declare const palette: Record<
   | 'warning'
   | 'warning-soft'
   | 'danger'
-  | 'danger-soft',
-  string
->;
+  | 'danger-soft';
+
+export type Palette = Record<PaletteName, string>;
+
+export type ColorMode = 'standard' | 'high-contrast' | 'night';
+
+export declare const palette: Palette;
+export declare const palettes: Record<ColorMode, Palette>;
+export declare const themedColors: Palette;
 
 export declare const fontFamily: Record<
   'body' | 'body-medium' | 'body-semibold' | 'body-bold',

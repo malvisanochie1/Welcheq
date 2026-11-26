@@ -7,7 +7,7 @@ import { AppState, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { formatTime } from '@/lib/format-date';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { RecordedCall } from '../api/daily-call.api';
 import { useDailyCallPlan } from '../hooks/use-daily-call';
 import { openPhoneCall, openWhatsAppCall } from '../lib/call-links';
@@ -35,6 +35,7 @@ export interface DailyCallCardProps {
 }
 
 export function DailyCallCard({ patientId, relationship }: DailyCallCardProps) {
+  const palette = usePalette();
   const plan = useDailyCallPlan(patientId);
   const isAwaitingReturn = useRef(false);
 

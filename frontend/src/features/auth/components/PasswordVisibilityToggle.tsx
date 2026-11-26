@@ -1,7 +1,8 @@
 import { Eye, EyeOff } from 'lucide-react-native';
 import { Pressable } from 'react-native';
 
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 
 const ICON_SIZE = 20;
 
@@ -11,6 +12,7 @@ export interface PasswordVisibilityToggleProps {
 }
 
 export function PasswordVisibilityToggle({ isVisible, onToggle }: PasswordVisibilityToggleProps) {
+  const palette = usePalette();
   const Icon = isVisible ? EyeOff : Eye;
 
   return (

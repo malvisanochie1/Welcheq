@@ -8,12 +8,12 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ErrorState } from '@/components/layout/ErrorState';
+import { ThemeProvider } from '@/features/accessibility/components/ThemeProvider';
 import { useAccessStage } from '@/features/auth/hooks/use-access-stage';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
 import { useHomeDisplayStore } from '@/features/home-display/stores/home-display.store';
@@ -37,8 +37,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <StatusBar style="dark" />
-          {areFontsLoaded && <RootNavigator />}
+          <ThemeProvider>{areFontsLoaded && <RootNavigator />}</ThemeProvider>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

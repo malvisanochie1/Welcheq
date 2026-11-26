@@ -9,7 +9,8 @@ import { signOut } from '@/features/auth/api/auth.api';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
 import { useUnreadNotificationCount } from '@/features/notifications/hooks/use-notifications';
 import { cn } from '@/lib/cn';
-import { layout, palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { layout } from '@/theme';
 
 const ICON_SIZE = 20;
 
@@ -19,6 +20,7 @@ function resolveSection(pathname: string): string {
 }
 
 export function DesktopSidebar() {
+  const palette = usePalette();
   const section = resolveSection(usePathname());
   const unread = useUnreadNotificationCount();
   const { data: profile } = useOwnProfile();

@@ -1,7 +1,8 @@
 import { Fingerprint } from 'lucide-react-native';
 import { Pressable } from 'react-native';
 
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 
 const ICON_SIZE = 22;
 
@@ -10,6 +11,7 @@ export interface BiometricButtonProps {
 }
 
 export function BiometricButton({ onPress }: BiometricButtonProps) {
+  const palette = usePalette();
   return (
     <Pressable
       accessibilityRole="button"

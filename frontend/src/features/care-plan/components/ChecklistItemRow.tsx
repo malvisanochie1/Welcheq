@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { CATEGORY_DETAILS, STATUS_DETAILS } from '@/config/care-plan';
 import { cn } from '@/lib/cn';
 import { formatTime } from '@/lib/format-date';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { ChecklistItem } from '../api/care-plan.api';
 import { StatusChip } from './StatusChip';
 
@@ -20,6 +20,7 @@ export interface ChecklistItemRowProps {
 }
 
 export function ChecklistItemRow({ item, canRecord, isFirst, onRecord }: ChecklistItemRowProps) {
+  const palette = usePalette();
   const { task, status, record } = item;
   const category = CATEGORY_DETAILS[task.category];
   const Icon = category.icon;

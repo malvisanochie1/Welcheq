@@ -10,7 +10,7 @@ import { Text } from '@/components/ui/Text';
 import { TextField } from '@/components/ui/TextField';
 import { ApiError } from '@/lib/api-client';
 import { formatTime } from '@/lib/format-date';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { useCheckIn, useCheckOut, useMyOpenVisit } from '../hooks/use-attendance';
 import { createLocalId } from '../lib/sync-offline-attendance';
 import { LocationUnavailableError, readCurrentLocation } from '../lib/read-location';
@@ -37,6 +37,7 @@ export function CheckInPanel({
   requiresHomeCode,
   requiresSelfie,
 }: CheckInPanelProps) {
+  const palette = usePalette();
   const openVisit = useMyOpenVisit();
   const checkIn = useCheckIn(patientId);
   const checkOut = useCheckOut(patientId);

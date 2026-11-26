@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Text } from '@/components/ui/Text';
 import { ApiError } from '@/lib/api-client';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { useAnswerSurpriseCheck } from '../hooks/use-attendance';
 import { LocationUnavailableError, readCurrentLocation } from '../lib/read-location';
 
@@ -23,6 +23,7 @@ export function SurpriseCheckPrompt({
   visitId,
   patientFirstName,
 }: SurpriseCheckPromptProps) {
+  const palette = usePalette();
   const answer = useAnswerSurpriseCheck(patientId);
   const [isLocating, setIsLocating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

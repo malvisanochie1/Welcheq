@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/PressableScale';
 import { Text } from '@/components/ui/Text';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { Patient } from '../api/patients.api';
 import { ageFromDateOfBirth } from '../lib/age';
 
@@ -15,6 +15,7 @@ export interface PatientCardProps {
 }
 
 export function PatientCard({ patient, onPress }: PatientCardProps) {
+  const palette = usePalette();
   const age = ageFromDateOfBirth(patient.dateOfBirth);
   const initials = patient.fullName
     .split(' ')

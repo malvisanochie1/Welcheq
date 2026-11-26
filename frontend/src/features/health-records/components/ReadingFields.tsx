@@ -6,7 +6,7 @@ import { PressableScale } from '@/components/ui/PressableScale';
 import { Text } from '@/components/ui/Text';
 import { TextField } from '@/components/ui/TextField';
 import { READING_DETAILS } from '@/config/health-records';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { cleanNumberInput, type ReadingDraft } from '../lib/reading-draft';
 
 const ICON_SIZE = 18;
@@ -19,6 +19,7 @@ export interface ReadingFieldsProps {
 }
 
 export function ReadingFields({ draft, errorMessage, onChange, onRemove }: ReadingFieldsProps) {
+  const palette = usePalette();
   const spec = READING_SPECS[draft.type];
   const details = READING_DETAILS[draft.type];
   const keyboardType = spec.decimals > 0 ? 'decimal-pad' : 'number-pad';

@@ -3,12 +3,13 @@ import { View } from 'react-native';
 
 import { Text } from '@/components/ui/Text';
 import { ATTENDANCE_FLAG_LABELS, SURPRISE_CHECK_OUTCOME_LABELS } from '@/config/attendance';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import type { Visit } from '../api/attendance.api';
 
 const ICON_SIZE = 14;
 
 export function VisitEvidence({ visit }: { visit: Visit }) {
+  const palette = usePalette();
   const surprise = visit.surpriseCheck && SURPRISE_CHECK_OUTCOME_LABELS[visit.surpriseCheck.status];
   const lines = [
     ...(visit.homeCodeVerified ? [{ label: 'Home code confirmed', isWarning: false }] : []),

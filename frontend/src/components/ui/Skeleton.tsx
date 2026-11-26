@@ -6,7 +6,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { palette, radius } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { radius } from '@/theme';
 
 const PULSE_MS = 900;
 const DIM_OPACITY = 0.45;
@@ -16,6 +17,7 @@ export interface SkeletonProps {
 }
 
 export function Skeleton({ height }: SkeletonProps) {
+  const palette = usePalette();
   const opacity = useSharedValue(1);
 
   useEffect(() => {

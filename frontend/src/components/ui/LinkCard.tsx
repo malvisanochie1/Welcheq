@@ -2,7 +2,7 @@ import { ChevronRight, type LucideIcon } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 import { PressableScale } from './PressableScale';
 import { Text } from './Text';
 
@@ -17,6 +17,7 @@ export interface LinkCardProps {
 }
 
 export function LinkCard({ icon: Icon, title, subtitle, accessory, onPress }: LinkCardProps) {
+  const palette = usePalette();
   return (
     <PressableScale
       accessibilityRole="button"

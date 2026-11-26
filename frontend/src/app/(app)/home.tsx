@@ -19,7 +19,8 @@ import { PatientCard } from '@/features/patients/components/PatientCard';
 import { usePatients } from '@/features/patients/hooks/use-patients';
 import { useIsWideLayout } from '@/hooks/use-is-wide-layout';
 import { cn } from '@/lib/cn';
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 
 const SKELETON_ROWS = 3;
 const CARD_HEIGHT = 80;
@@ -37,6 +38,7 @@ const EMPTY_COPY = {
 } as const;
 
 export default function HomeScreen() {
+  const palette = usePalette();
   const { data: profile } = useOwnProfile();
   const patients = usePatients();
   const isWide = useIsWideLayout();

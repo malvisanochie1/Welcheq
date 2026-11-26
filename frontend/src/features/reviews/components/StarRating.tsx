@@ -2,11 +2,14 @@ import { REVIEW_RULES } from '@welcheq/shared';
 import { Star } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 
-import { palette, touchTarget } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
+import { touchTarget } from '@/theme';
 
 const STARS = Array.from({ length: REVIEW_RULES.MAX_RATING }, (_, index) => index + 1);
 const SMALL_ICON = 16;
 const LARGE_ICON = 32;
+/** A 4.5 average shows four stars; the exact figure is written beside it. */
+const HALF_STAR_ROUNDING = 0.49;
 
 export interface StarRatingProps {
   value: number;
@@ -15,6 +18,7 @@ export interface StarRatingProps {
 
 /** Shows a rating, or lets someone choose one when onChange is given. */
 export function StarRating({ value, onChange }: StarRatingProps) {
+  const palette = usePalette();
   const size = onChange ? LARGE_ICON : SMALL_ICON;
 
   return (
@@ -24,7 +28,7 @@ export function StarRating({ value, onChange }: StarRatingProps) {
       className="flex-row"
     >
       {STARS.map((star) => {
-        const isFilled = star <= Math.round(value);
+        const isFilled = star <= Math.floor(value + HALF_STAR_ROUNDING);
         const icon = (
           <Star
             size={size}

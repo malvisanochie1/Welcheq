@@ -15,7 +15,7 @@ import { TemplatePicker } from '@/features/care-plan/components/TemplatePicker';
 import { useCareTasks } from '@/features/care-plan/hooks/use-care-plan';
 import { usePatient } from '@/features/patients/hooks/use-patients';
 import { cn } from '@/lib/cn';
-import { palette } from '@/theme';
+import { usePalette } from '@/features/accessibility/hooks/use-palette';
 
 const ICON_SIZE = 20;
 const SKELETON_HEIGHT = 240;
@@ -24,6 +24,7 @@ const describeDays = (days: number[]) =>
   days.length === 0 ? 'Every day' : days.map((day) => WEEKDAY_SHORT_LABELS[day]).join(', ');
 
 export default function CarePlanScreen() {
+  const palette = usePalette();
   const { patientId } = useLocalSearchParams<{ patientId: string }>();
   const patient = usePatient(patientId);
   const tasks = useCareTasks(patientId);
