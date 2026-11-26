@@ -113,8 +113,8 @@ Backend tests need a local PostgreSQL database named `welcheq_test`.
 
 | Variable              | Description                                   | Example                          |
 | --------------------- | --------------------------------------------- | -------------------------------- |
-| `DATABASE_URL`        | Pooled connection used by the running API     | `postgresql://...:6543/postgres` |
-| `DIRECT_DATABASE_URL` | Direct connection used for migrations         | `postgresql://...:5432/postgres` |
+| `DATABASE_URL`        | Connection used by the running API            | `postgresql://...:5432/postgres` |
+| `DIRECT_DATABASE_URL` | Connection used for migrations                | `postgresql://...:5432/postgres` |
 | `SUPABASE_URL`        | Supabase project URL, used to verify sign-ins | `https://abc.supabase.co`        |
 | `CORS_ORIGINS`        | Web origins allowed to call the API           | `http://localhost:8081`          |
 | `PORT`                | Port the API listens on                       | `4000`                           |
