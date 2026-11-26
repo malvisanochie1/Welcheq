@@ -9,6 +9,7 @@ import { logger } from '@/lib/logger';
 import { errorHandler, notFoundHandler } from '@/middleware/error-handler';
 import { globalRateLimit } from '@/middleware/rate-limit';
 import { myAttendanceRouter } from '@/modules/attendance/attendance.routes';
+import { homeDisplayRouter } from '@/modules/home-display/home-display.routes';
 import { healthRouter } from '@/modules/health/health.routes';
 import { invitationRouter } from '@/modules/invitations/invitation.routes';
 import { patientRouter } from '@/modules/patients/patient.routes';
@@ -31,6 +32,7 @@ export function createApp() {
   app.use('/v1/me', profileRouter);
   app.use('/v1/patients', patientRouter);
   app.use('/v1/invitations', invitationRouter);
+  app.use('/v1/home-display', homeDisplayRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

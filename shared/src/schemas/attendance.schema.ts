@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ATTENDANCE_RULES } from '../constants/attendance';
+import { ROTATING_CODE } from '../constants/proof';
 import { MINUTES_PER_DAY } from '../constants/care-plan';
 import { parseClockTime } from '../care-plan/clock';
 import { clockTimeSchema } from './care-plan.schema';
@@ -58,6 +59,17 @@ export const attendanceEventSchema = z.strictObject({
   location: locationReadingSchema,
   capturedAt: z.iso.datetime({ offset: true }),
   isOffline: z.boolean().default(false),
+  homeCode: z
+    .string()
+    .regex(new RegExp(`^\\d{${ROTATING_CODE.DIGITS}}$`), 'Enter the 6-digit code shown at the home')
+    .optional(),
 });
+
+export const surpriseCheckResponseSchema = z.strictObject({
+  location: locationReadingSchema,
+  capturedAt: z.iso.datetime({ offset: true }),
+});
+
+export type SurpriseCheckResponseInput = z.input<typeof surpriseCheckResponseSchema>;
 
 export type AttendanceEventInput = z.input<typeof attendanceEventSchema>;

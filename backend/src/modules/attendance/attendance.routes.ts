@@ -16,6 +16,11 @@ export const visitRouter = Router({ mergeParams: true });
 visitRouter.get('/', attendanceController.listVisits);
 visitRouter.post('/check-in', writeRateLimit, attendanceController.checkIn);
 visitRouter.post('/:visitId/check-out', writeRateLimit, attendanceController.checkOut);
+visitRouter.post(
+  '/:visitId/surprise-check',
+  writeRateLimit,
+  attendanceController.answerSurpriseCheck,
+);
 
 export const myAttendanceRouter = Router();
 

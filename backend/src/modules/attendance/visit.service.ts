@@ -8,8 +8,14 @@ import {
   isLateArrival,
   isWithinCheckInWindow,
   isWithinGeofence,
+  isValidHomeCode,
   OFFLINE_SYNC,
+  pickSurpriseCheckTime,
+  PROOF_METHOD,
+  SURPRISE_CHECK_STATUS,
+  surpriseCheckStatus,
   type AttendanceFlag,
+  type surpriseCheckResponseSchema,
   type attendanceEventSchema,
 } from '@welcheq/shared';
 import type { z } from 'zod';
@@ -18,6 +24,7 @@ import { Prisma } from '@/generated/prisma/client';
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
 import { HttpError } from '@/lib/http-error';
 import { prisma } from '@/lib/prisma';
+import { secureRandomFraction } from '@/lib/secure-codes';
 import type { ActingUser } from '@/middleware/require-profile';
 import { requirePatientAccess } from '@/modules/patients/patient-access';
 import { toVisitResponse } from './attendance.mapper';
@@ -25,6 +32,7 @@ import { attendanceRepository } from './attendance.repository';
 import { localRange } from './schedule.service';
 
 type AttendanceEvent = z.output<typeof attendanceEventSchema>;
+type SurpriseCheckResponse = z.output<typeof surpriseCheckResponseSchema>;
 
 const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
@@ -59,6 +67,20 @@ function measure(event: AttendanceEvent, home: { latitude: number; longitude: nu
   };
 }
 
+function verifyHomeCode(secret: string | null, code: string | undefined, at: Date) {
+  if (!secret) {
+    throw HttpError.invalid(
+      'The home display has not been set up yet. Ask the family to set it up first.',
+    );
+  }
+  if (!code) {
+    throw HttpError.invalid('Enter the 6-digit code shown on the home display.');
+  }
+  if (!isValidHomeCode(secret, code, at)) {
+    throw HttpError.invalid('That code is not right. Enter the code showing on the display now.');
+  }
+}
+
 export const visitService = {
   async checkIn(user: ActingUser, patientId: string, event: AttendanceEvent) {
     await requirePatientAccess(user, patientId, CAREGIVER_ONLY);
@@ -81,6 +103,11 @@ export const visitService = {
 
     const now = new Date();
     const checkInAt = resolveEventTime(event, now);
+    const requiresHomeCode = patient.proofMethods.includes(PROOF_METHOD.ROTATING_CODE);
+    if (requiresHomeCode) {
+      verifyHomeCode(patient.homeCodeSecret, event.homeCode, checkInAt);
+    }
+
     const flags: AttendanceFlag[] = [];
     if (event.location.isMocked) flags.push(ATTENDANCE_FLAG.MOCK_LOCATION);
     if (event.isOffline) flags.push(ATTENDANCE_FLAG.RECORDED_OFFLINE);
@@ -110,6 +137,18 @@ export const visitService = {
           checkInAccuracyMeters: reading.accuracyMeters,
           checkInDistanceMeters: distanceMeters,
           flags,
+          homeCodeVerified: requiresHomeCode,
+          surpriseCheck: patient.proofMethods.includes(PROOF_METHOD.SURPRISE_CHECK)
+            ? {
+                create: {
+                  dueAt: pickSurpriseCheckTime(
+                    checkInAt,
+                    shift?.endsAt ?? null,
+                    secureRandomFraction(),
+                  ),
+                },
+              }
+            : undefined,
         });
         await recordAuditEvent(tx, {
           actorId: user.id,
@@ -182,6 +221,56 @@ export const visitService = {
     return toVisitResponse(closed);
   },
 
+  async answerSurpriseCheck(
+    user: ActingUser,
+    patientId: string,
+    visitId: string,
+    response: SurpriseCheckResponse,
+  ) {
+    await requirePatientAccess(user, patientId, CAREGIVER_ONLY);
+
+    const now = new Date();
+    const visit = await attendanceRepository.findOpenVisit(user.id);
+    const check = visit?.surpriseCheck;
+    if (!visit || visit.id !== visitId || visit.patientId !== patientId || !check) {
+      throw HttpError.notFound('There is no surprise check for this visit');
+    }
+    if (surpriseCheckStatus(check, visit.checkOutAt, now) !== SURPRISE_CHECK_STATUS.DUE) {
+      throw HttpError.conflict('This check is not open right now.');
+    }
+
+    const patient = await attendanceRepository.patientSettings(patientId);
+    const home = { latitude: patient.homeLatitude, longitude: patient.homeLongitude };
+    const isAtHome =
+      response.location.accuracyMeters <= GEOFENCE.MAX_ACCEPTED_ACCURACY_METERS &&
+      isWithinGeofence(response.location, home, patient.geofenceRadiusMeters);
+    const passed = isAtHome && !response.location.isMocked;
+
+    await prisma.$transaction(async (tx) => {
+      const { count } = await tx.surpriseCheck.updateMany({
+        where: { id: check.id, respondedAt: null },
+        data: {
+          respondedAt: now,
+          passed,
+          distanceMeters: distanceInMeters(response.location, home),
+          isMocked: response.location.isMocked,
+        },
+      });
+      if (count === 0) {
+        throw HttpError.conflict('This check has already been answered.');
+      }
+      await recordAuditEvent(tx, {
+        actorId: user.id,
+        action: AUDIT_ACTION.SURPRISE_CHECK_ANSWERED,
+        entityType: 'visit',
+        entityId: visitId,
+        metadata: { passed },
+      });
+    });
+
+    return { passed };
+  },
+
   async openVisit(user: ActingUser) {
     const visit = await attendanceRepository.findOpenVisit(user.id);
     return visit ? toVisitResponse(visit) : null;
@@ -194,6 +283,7 @@ export const visitService = {
       patientId,
       localRange(from, to, timeZone),
     );
-    return visits.map(toVisitResponse);
+    const now = new Date();
+    return visits.map((visit) => toVisitResponse(visit, now));
   },
 };

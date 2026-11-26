@@ -4,6 +4,7 @@ import {
   DEFAULT_PATIENT_TIME_ZONE,
   idSchema,
   scheduleRangeSchema,
+  surpriseCheckResponseSchema,
 } from '@welcheq/shared';
 import type { Request, RequestHandler } from 'express';
 
@@ -74,6 +75,17 @@ export const attendanceController = {
       event,
     );
     res.json({ data: visit });
+  }) satisfies RequestHandler,
+
+  answerSurpriseCheck: (async (req, res) => {
+    const response = surpriseCheckResponseSchema.parse(req.body);
+    const result = await visitService.answerSurpriseCheck(
+      requireActingUser(req.actingUser),
+      patientIdFrom(req),
+      idSchema.parse(req.params.visitId),
+      response,
+    );
+    res.json({ data: result });
   }) satisfies RequestHandler,
 
   myShifts: (async (req, res) => {

@@ -20,6 +20,8 @@ export const attendanceRepository = {
         homeLatitude: true,
         homeLongitude: true,
         geofenceRadiusMeters: true,
+        proofMethods: true,
+        homeCodeSecret: true,
       },
     });
   },

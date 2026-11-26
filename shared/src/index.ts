@@ -10,6 +10,8 @@ export * from './constants/limits';
 export * from './constants/proof';
 export * from './constants/roles';
 export * from './geo/distance';
+export * from './proof/home-code';
+export * from './proof/surprise-check';
 export * from './schemas/attendance.schema';
 export * from './schemas/auth.schema';
 export * from './schemas/care-plan.schema';

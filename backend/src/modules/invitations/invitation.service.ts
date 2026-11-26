@@ -9,7 +9,7 @@ import {
 
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
 import { HttpError } from '@/lib/http-error';
-import { generateInvitationCode, hashInvitationCode } from '@/lib/invitation-code';
+import { generateInvitationCode, hashInvitationCode } from '@/lib/secure-codes';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
 import { requirePatientAccess } from '@/modules/patients/patient-access';

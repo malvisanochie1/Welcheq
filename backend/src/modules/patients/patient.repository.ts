@@ -13,6 +13,7 @@ export const PATIENT_FIELDS = {
   geofenceRadiusMeters: true,
   proofMethods: true,
   timeZone: true,
+  homeCodeSecret: true,
   createdAt: true,
   updatedAt: true,
 } as const satisfies Prisma.PatientSelect;

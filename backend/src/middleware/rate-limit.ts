@@ -28,3 +28,10 @@ export const invitationAcceptRateLimit = rateLimit({
   keyGenerator: (req) => req.identity?.userId ?? ipKeyGenerator(req.ip ?? ''),
   handler: (_req, _res, next) => next(rejectWithRateLimitError()),
 });
+
+export const homeDisplayPairRateLimit = rateLimit({
+  ...RATE_LIMITS.HOME_DISPLAY_PAIR,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: (_req, _res, next) => next(rejectWithRateLimitError()),
+});

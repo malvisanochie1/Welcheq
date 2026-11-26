@@ -14,12 +14,16 @@ export const AUDIT_ACTION = {
   SHIFT_CANCELLED: 'shift.cancelled',
   VISIT_CHECKED_IN: 'visit.checked_in',
   VISIT_CHECKED_OUT: 'visit.checked_out',
+  HOME_DISPLAY_PAIRING_CREATED: 'home_display.pairing_created',
+  HOME_DISPLAY_PAIRED: 'home_display.paired',
+  HOME_DISPLAY_RESET: 'home_display.reset',
+  SURPRISE_CHECK_ANSWERED: 'surprise_check.answered',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];
 
 export interface AuditEntry {
-  actorId: string;
+  actorId: string | null;
   action: AuditAction;
   entityType: string;
   entityId: string;

@@ -121,18 +121,20 @@ model Patient {
   geofenceRadiusMeters Int           @default(150)
   proofMethods         ProofMethod[] @default([LOCATION])
   timeZone             String        @default("Africa/Lagos")
+  homeCodeSecret       String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   archivedAt           DateTime?
 
-  organization Organization?   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  createdBy    User            @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  access       PatientAccess[]
-  invitations  Invitation[]
-  careTasks    CareTask[]
-  taskRecords  TaskRecord[]
-  shifts       Shift[]
-  visits       Visit[]
+  organization    Organization?        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy       User                 @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  access          PatientAccess[]
+  invitations     Invitation[]
+  careTasks       CareTask[]
+  taskRecords     TaskRecord[]
+  shifts          Shift[]
+  visits          Visit[]
+  displayPairings HomeDisplayPairing[]
 
   @@index([organizationId])
   @@map("patients")
@@ -256,17 +258,48 @@ model Visit {
   checkOutAccuracyMeters Float?
   checkOutDistanceMeters Float?
   flags                  AttendanceFlag[]
+  homeCodeVerified       Boolean          @default(false)
   createdAt              DateTime         @default(now())
 
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  caregiver User    @relation("VisitCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
-  openFor   User?   @relation("OpenVisit", fields: [openForCaregiverId], references: [id], onDelete: SetNull)
-  shift     Shift?  @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+  patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caregiver     User           @relation("VisitCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
+  openFor       User?          @relation("OpenVisit", fields: [openForCaregiverId], references: [id], onDelete: SetNull)
+  shift         Shift?         @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+  surpriseCheck SurpriseCheck?
 
   @@index([patientId, checkInAt])
   @@index([caregiverId, checkInAt])
   @@index([shiftId])
   @@map("visits")
+}
+
+model SurpriseCheck {
+  id             String    @id @default(uuid()) @db.Uuid
+  visitId        String    @unique @db.Uuid
+  dueAt          DateTime
+  respondedAt    DateTime?
+  passed         Boolean?
+  distanceMeters Float?
+  isMocked       Boolean   @default(false)
+
+  visit Visit @relation(fields: [visitId], references: [id], onDelete: Cascade)
+
+  @@map("surprise_checks")
+}
+
+model HomeDisplayPairing {
+  id          String    @id @default(uuid()) @db.Uuid
+  patientId   String    @db.Uuid
+  codeHash    String    @unique
+  createdById String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  usedAt      DateTime?
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@map("home_display_pairings")
 }
 
 model AuditEvent {
