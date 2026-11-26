@@ -2,8 +2,12 @@
   "expo": {
     "name": "Welcheq",
     "slug": "welcheq",
+    "owner": "malvis",
     "scheme": "welcheq",
     "version": "0.1.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",

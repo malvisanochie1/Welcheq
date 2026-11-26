@@ -1,0 +1,24 @@
+name: Set up Expo
+description: Install Node, the Expo CLI and workspace dependencies.
+
+inputs:
+  expo-token:
+    description: Expo access token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+
+    - uses: expo/expo-github-action@v8
+      with:
+        eas-version: latest
+        token: ${{ inputs.expo-token }}
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci

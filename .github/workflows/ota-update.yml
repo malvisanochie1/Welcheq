@@ -1,0 +1,46 @@
+name: Publish OTA update
+
+on:
+  push:
+    branches: [main]
+    paths: ['frontend/**', 'shared/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ota-update
+  cancel-in-progress: true
+
+env:
+  EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+  EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the app is ready for updates
+        id: ready
+        working-directory: frontend
+        run: |
+          linked=$(node -p "Boolean(require('./app.json').expo.extra?.eas?.projectId)")
+          configured=$([ -n "$EXPO_PUBLIC_SUPABASE_URL" ] && [ -n "$EXPO_PUBLIC_API_URL" ] && echo true || echo false)
+          echo "ok=$([ "$linked" = true ] && [ "$configured" = true ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - if: steps.ready.outputs.ok == 'true'
+        uses: ./.github/actions/setup-expo
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - if: steps.ready.outputs.ok == 'true'
+        name: Publish update
+        working-directory: frontend
+        run: eas update --channel preview --message "$MESSAGE" --non-interactive
+        env:
+          MESSAGE: ${{ github.event.head_commit.message || 'Manual update' }}

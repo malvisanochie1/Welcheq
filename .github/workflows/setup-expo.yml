@@ -1,0 +1,32 @@
+name: Setup Expo project
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-expo
+        with:
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Link the Expo project and configure updates
+        working-directory: frontend
+        run: |
+          eas init --non-interactive --force
+          eas update:configure --non-interactive
+
+      - name: Commit the project link
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npx prettier --write frontend/app.json
+          git add frontend/app.json
+          git diff --cached --quiet || git commit -m "Link Expo project"
+          git push
