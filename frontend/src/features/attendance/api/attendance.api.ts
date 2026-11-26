@@ -5,6 +5,7 @@ import type {
   ShiftStatus,
   SurpriseCheckResponseInput,
   SurpriseCheckStatus,
+  Wellbeing,
 } from '@welcheq/shared';
 
 import { apiRequest } from '@/lib/api-client';
@@ -22,6 +23,7 @@ export interface Visit {
   isOpen: boolean;
   homeCodeVerified: boolean;
   hasSelfie: boolean;
+  wellbeing: Wellbeing | null;
   surpriseCheck: {
     id: string | null;
     status: SurpriseCheckStatus;

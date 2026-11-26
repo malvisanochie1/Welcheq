@@ -62,6 +62,12 @@ const REPORT_FIELDS = {
   author: { select: { fullName: true } },
 } as const;
 
+function reportEditableUntil(checkOutAt: Date | null): number {
+  return checkOutAt
+    ? checkOutAt.getTime() + REPORT_RULES.EDITABLE_AFTER_VISIT_HOURS * HOUR_MS
+    : Number.POSITIVE_INFINITY;
+}
+
 export const healthRecordService = {
   async saveVisitReport(
     user: ActingUser,
@@ -80,10 +86,7 @@ export const healthRecordService = {
     }
 
     const now = new Date();
-    const editableUntil = visit.checkOutAt
-      ? visit.checkOutAt.getTime() + REPORT_RULES.EDITABLE_AFTER_VISIT_HOURS * HOUR_MS
-      : Number.POSITIVE_INFINITY;
-    if (now.getTime() > editableUntil) {
+    if (now.getTime() > reportEditableUntil(visit.checkOutAt)) {
       throw HttpError.conflict('This visit report can no longer be changed.');
     }
 
@@ -132,6 +135,9 @@ export const healthRecordService = {
     const visit = await prisma.visit.findFirst({
       where: { id: visitId, patientId },
       select: {
+        checkInAt: true,
+        checkOutAt: true,
+        caregiver: { select: { id: true, fullName: true } },
         report: { select: REPORT_FIELDS },
         readings: { select: READING_FIELDS, orderBy: { measuredAt: 'asc' } },
       },
@@ -141,6 +147,13 @@ export const healthRecordService = {
     }
 
     return {
+      visit: {
+        checkInAt: visit.checkInAt,
+        checkOutAt: visit.checkOutAt,
+        caregiverName: visit.caregiver.fullName,
+      },
+      canEdit:
+        visit.caregiver.id === user.id && Date.now() <= reportEditableUntil(visit.checkOutAt),
       report: visit.report
         ? {
             wellbeing: visit.report.wellbeing,

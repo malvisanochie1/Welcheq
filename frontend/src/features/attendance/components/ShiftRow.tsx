@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
+import { VisitReportLink } from '@/features/health-records/components/VisitReportLink';
 import { cn } from '@/lib/cn';
 import { formatDay, formatTime } from '@/lib/format-date';
 import type { Shift } from '../api/attendance.api';
@@ -38,6 +39,13 @@ export function ShiftRow({ shift, isFirst, title, onCancel }: ShiftRowProps) {
       </View>
 
       {visit && <VisitEvidence visit={visit} />}
+      {visit && (
+        <VisitReportLink
+          patientId={shift.patientId}
+          visitId={visit.id}
+          wellbeing={visit.wellbeing}
+        />
+      )}
       {visit?.hasSelfie && (
         <SelfieViewer patientId={shift.patientId} visitId={visit.id} takenAt={visit.checkInAt} />
       )}

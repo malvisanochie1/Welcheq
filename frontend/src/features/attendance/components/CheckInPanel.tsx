@@ -1,4 +1,5 @@
 import { ROTATING_CODE, SURPRISE_CHECK_STATUS, type AttendanceEventInput } from '@welcheq/shared';
+import { router } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
@@ -101,6 +102,12 @@ export function CheckInPanel({
         await checkIn.mutateAsync({ ...event, ...(selfiePath ? { selfiePath } : {}) });
       } else {
         await checkOut.mutateAsync({ visitId: visitRef ?? '', event });
+        if (visitHere) {
+          router.push({
+            pathname: '/patients/[patientId]/visit-report',
+            params: { patientId, visitId: visitHere.id },
+          });
+        }
       }
       setHomeCode('');
     } catch (error) {
@@ -182,6 +189,18 @@ export function CheckInPanel({
         />
       )}
 
+      {visitHere && !hasPendingCheckOut && (
+        <Button
+          label="Write visit report"
+          variant="ghost"
+          onPress={() =>
+            router.push({
+              pathname: '/patients/[patientId]/visit-report',
+              params: { patientId, visitId: visitHere.id },
+            })
+          }
+        />
+      )}
       {!isOnVisitElsewhere && (
         <Button
           label={isLocating ? 'Finding your location…' : isCheckedIn ? 'Check out' : 'Check in'}

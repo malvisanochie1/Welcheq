@@ -76,11 +76,13 @@ describe('visit report', () => {
       .send(report);
 
     expect(saved.status).toBe(200);
+    expect(saved.body.data.canEdit).toBe(true);
 
     const asFamily = await request(app)
       .get(`/v1/patients/${patientId}/visits/${visitId}/report`)
       .set(owner.header);
     expect(asFamily.body.data.report).toMatchObject({ wellbeing: 'OKAY', author: 'Chika Eze' });
+    expect(asFamily.body.data.canEdit).toBe(false);
     expect(asFamily.body.data.readings).toHaveLength(2);
     expect(asFamily.body.data.readings[0]).toMatchObject({
       source: 'CAREGIVER',

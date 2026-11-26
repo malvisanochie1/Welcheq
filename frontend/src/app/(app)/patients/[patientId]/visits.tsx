@@ -18,6 +18,7 @@ import {
   usePatientVisits,
 } from '@/features/attendance/hooks/use-attendance';
 import { useDateRange } from '@/features/attendance/hooks/use-local-dates';
+import { VisitReportLink } from '@/features/health-records/components/VisitReportLink';
 import { usePatient } from '@/features/patients/hooks/use-patients';
 import { ApiError } from '@/lib/api-client';
 import { cn } from '@/lib/cn';
@@ -109,6 +110,11 @@ export default function VisitsScreen() {
                         ? ` · left ${formatTime(visit.checkOutAt)}`
                         : ' · still there'}
                     </Text>
+                    <VisitReportLink
+                      patientId={patientId}
+                      visitId={visit.id}
+                      wellbeing={visit.wellbeing}
+                    />
                   </View>
                 ))}
               </View>
