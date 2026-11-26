@@ -29,10 +29,7 @@ export function useAccessStage(): AccessState {
   if (status === 'signed-out') return { stage: 'signed-out', retry };
   if (profile.isPending || isRejected) return { stage: 'resolving', retry };
   if (profile.data) return { stage: 'ready', retry };
-
-  if (profile.error instanceof ApiError && profile.error.status === 404) {
-    return { stage: 'needs-profile', retry };
-  }
+  if (profile.data === null) return { stage: 'needs-profile', retry };
 
   return { stage: 'failed', errorMessage: profile.error?.message, retry };
 }
