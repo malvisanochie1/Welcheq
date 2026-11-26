@@ -27,6 +27,10 @@ vi.mock('../api/attendance.api', () => ({
   attendanceApi: { checkIn: vi.fn(), checkOut: vi.fn() },
 }));
 
+vi.mock('./selfie', () => ({
+  uploadSelfie: vi.fn(async () => 'patient-1/caregiver-1/photo.jpg'),
+}));
+
 const { ApiError } = await import('@/lib/api-client');
 const { attendanceApi } = await import('../api/attendance.api');
 const { useOfflineAttendanceStore } = await import('../stores/offline-attendance.store');
@@ -67,6 +71,24 @@ describe('syncOfflineAttendance', () => {
     expect(result).toEqual({ synced: 2, rejected: [] });
     expect(attendanceApi.checkOut).toHaveBeenCalledWith('patient-1', 'visit-9', event);
     expect(useOfflineAttendanceStore.getState().pending).toEqual([]);
+  });
+
+  it('uploads an offline selfie before sending its check-in', async () => {
+    vi.mocked(attendanceApi.checkIn).mockResolvedValue({ id: 'visit-9' } as never);
+    useOfflineAttendanceStore.getState().enqueue({
+      kind: 'check-in',
+      localId: 'local-in',
+      patientId: 'patient-1',
+      event,
+      selfieUri: 'file:///cache/selfie.jpg',
+    });
+
+    await syncOfflineAttendance();
+
+    expect(attendanceApi.checkIn).toHaveBeenCalledWith('patient-1', {
+      ...event,
+      selfiePath: 'patient-1/caregiver-1/photo.jpg',
+    });
   });
 
   it('keeps everything queued while still offline', async () => {

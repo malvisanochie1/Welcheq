@@ -8,6 +8,8 @@ export interface PendingCheckIn {
   localId: string;
   patientId: string;
   event: AttendanceEventInput;
+  /** A selfie taken offline, uploaded just before the check-in is sent. */
+  selfieUri?: string;
 }
 
 export interface PendingCheckOut {

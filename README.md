@@ -8,7 +8,7 @@
 ![iOS](https://img.shields.io/badge/iOS-supported-0F5C5A)
 ![Web](https://img.shields.io/badge/Web-supported-0F5C5A)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-12201F)
-![Version](https://img.shields.io/badge/version-0.2.0-B8692A)
+![Version](https://img.shields.io/badge/version-0.3.0-B8692A)
 
 <img src="docs/screenshots/mobile-welcome.webp" width="230" alt="Welcome screen" />
 &nbsp;&nbsp;
@@ -116,6 +116,7 @@ Backend tests need a local PostgreSQL database named `welcheq_test`.
 | `DATABASE_URL`        | Connection used by the running API            | `postgresql://...:5432/postgres` |
 | `DIRECT_DATABASE_URL` | Connection used for migrations                | `postgresql://...:5432/postgres` |
 | `SUPABASE_URL`        | Supabase project URL, used to verify sign-ins | `https://abc.supabase.co`        |
+| `SUPABASE_SECRET_KEY` | Server-only key for private selfie storage    | `sb_secret_...`                  |
 | `CORS_ORIGINS`        | Web origins allowed to call the API           | `http://localhost:8081`          |
 | `PORT`                | Port the API listens on                       | `4000`                           |
 

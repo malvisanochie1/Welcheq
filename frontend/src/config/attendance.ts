@@ -1,8 +1,10 @@
 import {
   ATTENDANCE_FLAG,
   SHIFT_STATUS,
+  SURPRISE_CHECK_STATUS,
   type AttendanceFlag,
   type ShiftStatus,
+  type SurpriseCheckStatus,
 } from '@welcheq/shared';
 
 export const SHIFT_STATUS_DETAILS: Readonly<
@@ -57,3 +59,15 @@ export const REPEAT_WEEK_CHOICES = [
 
 export const VISIT_HISTORY_DAYS = 7;
 export const VISIT_LOOKAHEAD_DAYS = 14;
+
+/** Only outcomes worth showing to the family; a pending check stays secret. */
+export const SURPRISE_CHECK_OUTCOME_LABELS: Readonly<
+  Partial<Record<SurpriseCheckStatus, { label: string; isWarning: boolean }>>
+> = {
+  [SURPRISE_CHECK_STATUS.PASSED]: { label: 'Surprise check passed', isWarning: false },
+  [SURPRISE_CHECK_STATUS.FAILED]: {
+    label: 'Surprise check answered away from home',
+    isWarning: true,
+  },
+  [SURPRISE_CHECK_STATUS.MISSED]: { label: 'Surprise check not answered', isWarning: true },
+};

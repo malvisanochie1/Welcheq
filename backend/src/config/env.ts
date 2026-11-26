@@ -6,6 +6,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   DATABASE_URL: z.url(),
   SUPABASE_URL: z.url(),
+  SUPABASE_SECRET_KEY: z.string().min(20).optional(),
   CORS_ORIGINS: z
     .string()
     .transform((value) =>

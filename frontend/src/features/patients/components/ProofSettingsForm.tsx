@@ -1,6 +1,7 @@
 import {
   CARE_RELATIONSHIP,
   MANDATORY_PROOF_METHODS,
+  PROOF_METHOD,
   proofSettingsSchema,
   type ProofMethod,
   type ProofSettingsInput,
@@ -14,6 +15,7 @@ import { PressableScale } from '@/components/ui/PressableScale';
 import { SwitchRow } from '@/components/ui/SwitchRow';
 import { Text } from '@/components/ui/Text';
 import { GEOFENCE_RADIUS_CHOICES, PROOF_METHOD_OPTIONS } from '@/config/proof-methods';
+import { useCapabilities } from '@/features/capabilities/use-capabilities';
 import { ApiError } from '@/lib/api-client';
 import { cn } from '@/lib/cn';
 import type { Patient } from '../api/patients.api';
@@ -30,6 +32,9 @@ export function ProofSettingsForm({ patient, onSaved }: ProofSettingsFormProps) 
   const [settings, setSettings] = useState<ProofSettingsInput>(patient.proofSettings);
   const updateProofSettings = useUpdateProofSettings(patient.id);
   const isEditable = patient.relationship === CARE_RELATIONSHIP.OWNER;
+  const capabilities = useCapabilities();
+  const isUnavailable = (method: ProofMethod) =>
+    method === PROOF_METHOD.SELFIE && capabilities.data?.selfie === false;
 
   const toggleMethod = (method: ProofMethod, isOn: boolean) =>
     setSettings((current) => ({
@@ -62,10 +67,10 @@ export function ProofSettingsForm({ patient, onSaved }: ProofSettingsFormProps) 
           <View key={option.method} className={cn('py-4', index > 0 && 'border-t border-border')}>
             <SwitchRow
               title={option.title}
-              description={option.description}
+              description={isUnavailable(option.method) ? 'Not available yet.' : option.description}
               value={settings.methods.includes(option.method)}
               onValueChange={(isOn) => toggleMethod(option.method, isOn)}
-              isDisabled={!isEditable || isMandatory(option.method)}
+              isDisabled={!isEditable || isMandatory(option.method) || isUnavailable(option.method)}
             />
           </View>
         ))}

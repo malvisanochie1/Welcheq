@@ -10,6 +10,7 @@ import type { Request, RequestHandler } from 'express';
 
 import { requireActingUser } from '@/middleware/require-profile';
 import { localRange, scheduleService } from './schedule.service';
+import { selfieService } from './selfie.service';
 import { visitService } from './visit.service';
 
 const patientIdFrom = (req: Request) => idSchema.parse(req.params.patientId);
@@ -86,6 +87,24 @@ export const attendanceController = {
       response,
     );
     res.json({ data: result });
+  }) satisfies RequestHandler,
+
+  requestSelfieUpload: (async (req, res) => {
+    const upload = await selfieService.requestUpload(
+      requireActingUser(req.actingUser),
+      patientIdFrom(req),
+    );
+    res.status(201).json({ data: upload });
+  }) satisfies RequestHandler,
+
+  viewSelfie: (async (req, res) => {
+    const view = await selfieService.viewUrl(
+      requireActingUser(req.actingUser),
+      patientIdFrom(req),
+      idSchema.parse(req.params.visitId),
+    );
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ data: view });
   }) satisfies RequestHandler,
 
   myShifts: (async (req, res) => {

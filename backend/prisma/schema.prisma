@@ -259,6 +259,7 @@ model Visit {
   checkOutDistanceMeters Float?
   flags                  AttendanceFlag[]
   homeCodeVerified       Boolean          @default(false)
+  selfiePath             String?          @unique
   createdAt              DateTime         @default(now())
 
   patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)

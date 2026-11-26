@@ -118,13 +118,28 @@ describe('proof settings', () => {
     const response = await request(app)
       .put(`/v1/patients/${patient.id}/proof-settings`)
       .set(owner.header)
-      .send({ methods: ['LOCATION', 'SELFIE', 'SURPRISE_CHECK'], geofenceRadiusMeters: 100 });
+      .send({
+        methods: ['LOCATION', 'ROTATING_CODE', 'SURPRISE_CHECK'],
+        geofenceRadiusMeters: 100,
+      });
 
     expect(response.status).toBe(200);
     expect(response.body.data.proofSettings).toEqual({
-      methods: ['LOCATION', 'SELFIE', 'SURPRISE_CHECK'],
+      methods: ['LOCATION', 'ROTATING_CODE', 'SURPRISE_CHECK'],
       geofenceRadiusMeters: 100,
     });
+  });
+
+  it('refuses selfies until photo storage is set up', async () => {
+    const owner = await signUpWithProfile(app, 'FAMILY');
+    const patient = await registerPatient(owner.header);
+
+    const response = await request(app)
+      .put(`/v1/patients/${patient.id}/proof-settings`)
+      .set(owner.header)
+      .send({ methods: ['LOCATION', 'SELFIE'], geofenceRadiusMeters: 150 });
+
+    expect(response.status).toBe(409);
   });
 
   it('never allows the location check to be removed', async () => {
@@ -146,7 +161,7 @@ describe('proof settings', () => {
     await request(app)
       .put(`/v1/patients/${patient.id}/proof-settings`)
       .set(owner.header)
-      .send({ methods: ['LOCATION', 'SELFIE'], geofenceRadiusMeters: 150 })
+      .send({ methods: ['LOCATION', 'SURPRISE_CHECK'], geofenceRadiusMeters: 150 })
       .expect(200);
 
     const actions = await prisma.auditEvent.findMany({

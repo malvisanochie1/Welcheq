@@ -1,16 +1,13 @@
-import { AlertTriangle } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
-import { ATTENDANCE_FLAG_LABELS } from '@/config/attendance';
 import { cn } from '@/lib/cn';
 import { formatDay, formatTime } from '@/lib/format-date';
-import { palette } from '@/theme';
 import type { Shift } from '../api/attendance.api';
 import { ShiftStatusChip } from './ShiftStatusChip';
-
-const ICON_SIZE = 14;
+import { SelfieViewer } from './SelfieViewer';
+import { VisitEvidence } from './VisitEvidence';
 
 export interface ShiftRowProps {
   shift: Shift;
@@ -40,17 +37,9 @@ export function ShiftRow({ shift, isFirst, title, onCancel }: ShiftRowProps) {
         <ShiftStatusChip status={shift.status} />
       </View>
 
-      {visit && visit.flags.length > 0 && (
-        <View className="gap-1">
-          {visit.flags.map((flag) => (
-            <View key={flag} className="flex-row items-center gap-2">
-              <AlertTriangle size={ICON_SIZE} color={palette.warning} />
-              <Text variant="caption" className="text-warning">
-                {ATTENDANCE_FLAG_LABELS[flag]}
-              </Text>
-            </View>
-          ))}
-        </View>
+      {visit && <VisitEvidence visit={visit} />}
+      {visit?.hasSelfie && (
+        <SelfieViewer patientId={shift.patientId} visitId={visit.id} takenAt={visit.checkInAt} />
       )}
 
       {onCancel && (

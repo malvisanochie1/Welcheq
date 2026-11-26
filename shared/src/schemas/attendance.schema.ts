@@ -8,6 +8,7 @@ import { clockTimeSchema } from './care-plan.schema';
 import { geoPointSchema, idSchema } from './common.schema';
 
 const MAX_REPORTED_ACCURACY_METERS = 5_000;
+const SELFIE_PATH_MAX_LENGTH = 200;
 
 export function shiftDurationMinutes(startTime: string, endTime: string): number | null {
   const start = parseClockTime(startTime);
@@ -63,6 +64,7 @@ export const attendanceEventSchema = z.strictObject({
     .string()
     .regex(new RegExp(`^\\d{${ROTATING_CODE.DIGITS}}$`), 'Enter the 6-digit code shown at the home')
     .optional(),
+  selfiePath: z.string().max(SELFIE_PATH_MAX_LENGTH).optional(),
 });
 
 export const surpriseCheckResponseSchema = z.strictObject({

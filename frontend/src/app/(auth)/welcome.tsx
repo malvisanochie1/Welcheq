@@ -40,6 +40,11 @@ export default function WelcomeScreen() {
           variant="secondary"
           onPress={() => router.push('/sign-in')}
         />
+        <Button
+          label="Set up a home display"
+          variant="ghost"
+          onPress={() => router.push('/home-display-setup')}
+        />
       </View>
     </Screen>
   );

@@ -1,5 +1,6 @@
 import {
   CARE_RELATIONSHIP,
+  PROOF_METHOD,
   PATIENT_EDITOR_RELATIONSHIPS,
   PATIENT_MANAGER_ROLES,
   type ProofSettingsInput,
@@ -10,6 +11,7 @@ import type { z } from 'zod';
 
 import { AUDIT_ACTION, recordAuditEvent } from '@/lib/audit';
 import { HttpError } from '@/lib/http-error';
+import { supabasePhotoStorage } from '@/lib/photo-storage/supabase-photo-storage';
 import { prisma } from '@/lib/prisma';
 import type { ActingUser } from '@/middleware/require-profile';
 import { toPatientResponse } from './patient.mapper';
@@ -92,6 +94,9 @@ export const patientService = {
 
   async updateProofSettings(user: ActingUser, patientId: string, input: ProofSettingsInput) {
     const relationship = await requirePatientAccess(user, patientId, PATIENT_EDITOR_RELATIONSHIPS);
+    if (input.methods.includes(PROOF_METHOD.SELFIE) && !supabasePhotoStorage.isConfigured) {
+      throw HttpError.conflict('Selfies are not available yet. Try again later.');
+    }
 
     const patient = await prisma.$transaction(async (tx) => {
       const updated = await patientRepository.update(tx, patientId, {

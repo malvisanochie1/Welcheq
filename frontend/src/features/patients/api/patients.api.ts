@@ -17,6 +17,7 @@ export interface Patient {
   proofSettings: { methods: ProofMethod[]; geofenceRadiusMeters: number };
   relationship: CareRelationship;
   timeZone: string;
+  isHomeDisplayConfigured: boolean;
   createdAt: string;
   updatedAt: string;
 }

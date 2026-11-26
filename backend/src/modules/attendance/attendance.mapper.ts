@@ -18,6 +18,7 @@ export const VISIT_FIELDS = {
   checkOutDistanceMeters: true,
   flags: true,
   homeCodeVerified: true,
+  selfiePath: true,
   caregiver: { select: { id: true, fullName: true } },
   surpriseCheck: {
     select: { id: true, dueAt: true, respondedAt: true, passed: true, distanceMeters: true },
@@ -67,6 +68,7 @@ export function toVisitResponse(visit: VisitRecord, now = new Date()) {
     flags: visit.flags,
     isOpen: visit.checkOutAt === null,
     homeCodeVerified: visit.homeCodeVerified,
+    hasSelfie: visit.selfiePath !== null,
     surpriseCheck: surpriseCheckView(visit, now),
   };
 }

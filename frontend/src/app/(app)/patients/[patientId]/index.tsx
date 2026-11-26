@@ -1,4 +1,4 @@
-import { CARE_RELATIONSHIP, CHECKLIST_STATUS } from '@welcheq/shared';
+import { CARE_RELATIONSHIP, CHECKLIST_STATUS, PROOF_METHOD } from '@welcheq/shared';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarClock, ClipboardList, ListChecks, ShieldCheck } from 'lucide-react-native';
 import { View } from 'react-native';
@@ -73,7 +73,14 @@ export default function PatientScreen() {
           .join(' · ')}
       />
 
-      {isCaregiver && <CheckInPanel patientId={patientId} patientName={fullName} />}
+      {isCaregiver && (
+        <CheckInPanel
+          patientId={patientId}
+          patientName={fullName}
+          requiresHomeCode={proofSettings.methods.includes(PROOF_METHOD.ROTATING_CODE)}
+          requiresSelfie={proofSettings.methods.includes(PROOF_METHOD.SELFIE)}
+        />
+      )}
 
       <View className="gap-3">
         <LinkCard

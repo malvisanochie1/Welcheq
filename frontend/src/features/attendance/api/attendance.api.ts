@@ -3,6 +3,8 @@ import type {
   AttendanceFlag,
   CreateShiftInput,
   ShiftStatus,
+  SurpriseCheckResponseInput,
+  SurpriseCheckStatus,
 } from '@welcheq/shared';
 
 import { apiRequest } from '@/lib/api-client';
@@ -18,6 +20,14 @@ export interface Visit {
   checkOutDistanceMeters: number | null;
   flags: AttendanceFlag[];
   isOpen: boolean;
+  homeCodeVerified: boolean;
+  hasSelfie: boolean;
+  surpriseCheck: {
+    id: string | null;
+    status: SurpriseCheckStatus;
+    dueAt: string | null;
+    respondedAt: string | null;
+  } | null;
 }
 
 export interface Shift {
@@ -61,6 +71,22 @@ export const attendanceApi = {
     }),
   patientVisits: (patientId: string, range: DateRange) =>
     apiRequest<Visit[]>(`${patientPath(patientId)}/visits${rangeQuery(range)}`),
+  answerSurpriseCheck: (patientId: string, visitId: string, input: SurpriseCheckResponseInput) =>
+    apiRequest<{ passed: boolean }>(
+      `${patientPath(patientId)}/visits/${encodeURIComponent(visitId)}/surprise-check`,
+      { method: 'POST', body: input },
+    ),
+  requestSelfieUpload: (patientId: string) =>
+    apiRequest<{ path: string; uploadUrl: string }>(
+      `${patientPath(patientId)}/visits/selfie-upload`,
+      {
+        method: 'POST',
+      },
+    ),
+  viewSelfie: (patientId: string, visitId: string) =>
+    apiRequest<{ url: string; expiresAt: string }>(
+      `${patientPath(patientId)}/visits/${encodeURIComponent(visitId)}/selfie`,
+    ),
   myShifts: (range: DateRange) => apiRequest<Shift[]>(`/v1/me/shifts${rangeQuery(range)}`),
   myOpenVisit: () => apiRequest<Visit | null>('/v1/me/visits/open'),
 };

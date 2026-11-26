@@ -16,6 +16,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorState } from '@/components/layout/ErrorState';
 import { useAccessStage } from '@/features/auth/hooks/use-access-stage';
 import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
+import { useHomeDisplayStore } from '@/features/home-display/stores/home-display.store';
 import { LockScreen } from '@/features/security/components/LockScreen';
 import { useInactivityLock } from '@/features/security/hooks/use-inactivity-lock';
 import { useAppLockStore } from '@/features/security/stores/app-lock.store';
@@ -47,22 +48,30 @@ export default function RootLayout() {
 function RootNavigator() {
   const { stage, errorMessage, retry } = useAccessStage();
   const { data: profile } = useOwnProfile();
+  const displayStatus = useHomeDisplayStore((state) => state.status);
+  const loadDisplay = useHomeDisplayStore((state) => state.load);
+  const isHomeDisplay = displayStatus === 'paired';
+  const isResolving = stage === 'resolving' || displayStatus === 'loading';
+
+  useEffect(() => {
+    loadDisplay();
+  }, [loadDisplay]);
   const isSignedIn = stage === 'ready' || stage === 'needs-profile';
   const isLocked = useAppLockStore((state) => state.isLocked);
 
   useInactivityLock(isSignedIn);
 
   useEffect(() => {
-    if (stage !== 'resolving') {
+    if (!isResolving) {
       SplashScreen.hideAsync();
     }
-  }, [stage]);
+  }, [isResolving]);
 
-  if (stage === 'resolving') {
+  if (isResolving) {
     return null;
   }
 
-  if (stage === 'failed') {
+  if (stage === 'failed' && !isHomeDisplay) {
     return (
       <ErrorState
         title="We couldn't load your account"
@@ -76,18 +85,23 @@ function RootNavigator() {
     <>
       <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
         <Stack.Screen name="index" />
-        <Stack.Protected guard={stage === 'signed-out'}>
+        <Stack.Protected guard={isHomeDisplay}>
+          <Stack.Screen name="home-display" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isHomeDisplay && stage === 'signed-out'}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === 'needs-profile'}>
+        <Stack.Protected guard={!isHomeDisplay && stage === 'needs-profile'}>
           <Stack.Screen name="setup-profile" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === 'ready'}>
+        <Stack.Protected guard={!isHomeDisplay && stage === 'ready'}>
           <Stack.Screen name="(app)" />
         </Stack.Protected>
         <Stack.Screen name="+not-found" />
       </Stack>
-      {isSignedIn && isLocked && <LockScreen firstName={profile?.fullName.split(' ')[0]} />}
+      {isSignedIn && isLocked && !isHomeDisplay && (
+        <LockScreen firstName={profile?.fullName.split(' ')[0]} />
+      )}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { ApiError } from '@/lib/api-client';
 import { attendanceApi } from '../api/attendance.api';
+import { uploadSelfie } from './selfie';
 import {
   useOfflineAttendanceStore,
   type PendingAttendance,
@@ -44,7 +45,13 @@ export async function syncOfflineAttendance(): Promise<SyncResult> {
     const { remove, replaceVisitRef } = useOfflineAttendanceStore.getState();
     try {
       if (entry.kind === 'check-in') {
-        const visit = await attendanceApi.checkIn(entry.patientId, entry.event);
+        const selfiePath = entry.selfieUri
+          ? await uploadSelfie(entry.patientId, entry.selfieUri)
+          : undefined;
+        const visit = await attendanceApi.checkIn(entry.patientId, {
+          ...entry.event,
+          ...(selfiePath ? { selfiePath } : {}),
+        });
         replaceVisitRef(entry.localId, visit.id);
       } else {
         await attendanceApi.checkOut(entry.patientId, entry.visitRef, entry.event);

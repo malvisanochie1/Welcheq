@@ -15,6 +15,8 @@ export const visitRouter = Router({ mergeParams: true });
 
 visitRouter.get('/', attendanceController.listVisits);
 visitRouter.post('/check-in', writeRateLimit, attendanceController.checkIn);
+visitRouter.post('/selfie-upload', writeRateLimit, attendanceController.requestSelfieUpload);
+visitRouter.get('/:visitId/selfie', attendanceController.viewSelfie);
 visitRouter.post('/:visitId/check-out', writeRateLimit, attendanceController.checkOut);
 visitRouter.post(
   '/:visitId/surprise-check',

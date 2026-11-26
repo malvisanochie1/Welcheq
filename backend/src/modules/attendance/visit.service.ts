@@ -30,6 +30,7 @@ import { requirePatientAccess } from '@/modules/patients/patient-access';
 import { toVisitResponse } from './attendance.mapper';
 import { attendanceRepository } from './attendance.repository';
 import { localRange } from './schedule.service';
+import { selfieService } from './selfie.service';
 
 type AttendanceEvent = z.output<typeof attendanceEventSchema>;
 type SurpriseCheckResponse = z.output<typeof surpriseCheckResponseSchema>;
@@ -107,6 +108,10 @@ export const visitService = {
     if (requiresHomeCode) {
       verifyHomeCode(patient.homeCodeSecret, event.homeCode, checkInAt);
     }
+    const requiresSelfie = patient.proofMethods.includes(PROOF_METHOD.SELFIE);
+    if (requiresSelfie) {
+      await selfieService.verify(event.selfiePath, patientId, user.id, checkInAt);
+    }
 
     const flags: AttendanceFlag[] = [];
     if (event.location.isMocked) flags.push(ATTENDANCE_FLAG.MOCK_LOCATION);
@@ -138,6 +143,7 @@ export const visitService = {
           checkInDistanceMeters: distanceMeters,
           flags,
           homeCodeVerified: requiresHomeCode,
+          selfiePath: requiresSelfie ? event.selfiePath : null,
           surpriseCheck: patient.proofMethods.includes(PROOF_METHOD.SURPRISE_CHECK)
             ? {
                 create: {
@@ -165,7 +171,12 @@ export const visitService = {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === UNIQUE_VIOLATION
       ) {
-        throw HttpError.conflict('You are already checked in. Check out of that visit first.');
+        const isSelfieReuse = (error.meta?.target as string[] | undefined)?.includes('selfiePath');
+        throw HttpError.conflict(
+          isSelfieReuse
+            ? 'This selfie was already used. Please take a new one.'
+            : 'You are already checked in. Check out of that visit first.',
+        );
       }
       throw error;
     }

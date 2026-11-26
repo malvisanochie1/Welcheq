@@ -1,4 +1,8 @@
-import type { AttendanceEventInput, CreateShiftInput } from '@welcheq/shared';
+import type {
+  AttendanceEventInput,
+  CreateShiftInput,
+  SurpriseCheckResponseInput,
+} from '@welcheq/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { attendanceApi, type DateRange } from '../api/attendance.api';
@@ -41,11 +45,24 @@ export function useMyShifts(range: DateRange, isEnabled = true) {
   });
 }
 
+const OPEN_VISIT_REFRESH_MS = 2 * 60_000;
+
+/** Polled so a surprise check appears soon after it becomes due. */
 export function useMyOpenVisit(isEnabled = true) {
   return useQuery({
     queryKey: openVisitKey,
     queryFn: attendanceApi.myOpenVisit,
     enabled: isEnabled,
+    refetchInterval: OPEN_VISIT_REFRESH_MS,
+  });
+}
+
+export function useAnswerSurpriseCheck(patientId: string) {
+  const refresh = useRefreshAttendance();
+  return useMutation({
+    mutationFn: ({ visitId, input }: { visitId: string; input: SurpriseCheckResponseInput }) =>
+      attendanceApi.answerSurpriseCheck(patientId, visitId, input),
+    onSuccess: refresh,
   });
 }
 

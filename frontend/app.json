@@ -4,7 +4,7 @@
     "slug": "welcheq",
     "owner": "malvis",
     "scheme": "welcheq",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -63,6 +63,15 @@
           "locationWhenInUsePermission": "Welcheq uses your location to confirm visits happen at the patient’s home.",
           "isAndroidBackgroundLocationEnabled": false,
           "isIosBackgroundLocationEnabled": false
+        }
+      ],
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Welcheq uses the camera for the check-in selfie the family asked for.",
+          "photosPermission": false,
+          "microphonePermission": false
         }
       ]
     ],
