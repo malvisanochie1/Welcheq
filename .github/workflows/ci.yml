@@ -65,6 +65,7 @@ jobs:
         working-directory: frontend
         env:
           EXPO_PUBLIC_API_URL: http://localhost:4000
+          EXPO_PUBLIC_WEB_URL: http://localhost:8081
           EXPO_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
           EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_build_only
         run: npx expo export --platform web --output-dir dist

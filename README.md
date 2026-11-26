@@ -122,11 +122,12 @@ Backend tests need a local PostgreSQL database named `welcheq_test`.
 
 **App** (`frontend/.env`, public values only)
 
-| Variable                               | Description              | Example                   |
-| -------------------------------------- | ------------------------ | ------------------------- |
-| `EXPO_PUBLIC_API_URL`                  | Welcheq API address      | `http://localhost:4000`   |
-| `EXPO_PUBLIC_SUPABASE_URL`             | Supabase project URL     | `https://abc.supabase.co` |
-| `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key | `sb_publishable_...`      |
+| Variable                               | Description                          | Example                   |
+| -------------------------------------- | ------------------------------------ | ------------------------- |
+| `EXPO_PUBLIC_API_URL`                  | Welcheq API address                  | `http://localhost:4000`   |
+| `EXPO_PUBLIC_WEB_URL`                  | Web app address, used in email links | `http://localhost:8081`   |
+| `EXPO_PUBLIC_SUPABASE_URL`             | Supabase project URL                 | `https://abc.supabase.co` |
+| `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key             | `sb_publishable_...`      |
 
 ## License
 

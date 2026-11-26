@@ -85,6 +85,7 @@ function RootNavigator() {
     <>
       <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="email-confirmed" />
         <Stack.Protected guard={isHomeDisplay}>
           <Stack.Screen name="home-display" />
         </Stack.Protected>

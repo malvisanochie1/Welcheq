@@ -1,5 +1,7 @@
 import type { SignInInput, SignUpInput } from '@welcheq/shared';
 
+import { publicEnv } from '@/config/env';
+import { EMAIL_CONFIRMED_PATH } from '@/config/navigation';
 import { queryClient } from '@/lib/query-client';
 import { supabase } from '@/lib/supabase';
 
@@ -34,7 +36,10 @@ export async function verifyCurrentPassword(password: string): Promise<SignInInp
 export type SignUpOutcome = 'signed-in' | 'confirm-email';
 
 export async function signUpWithPassword(input: SignUpInput): Promise<SignUpOutcome> {
-  const { data, error } = await supabase.auth.signUp(input);
+  const { data, error } = await supabase.auth.signUp({
+    ...input,
+    options: { emailRedirectTo: `${publicEnv.webUrl}${EMAIL_CONFIRMED_PATH}` },
+  });
   if (error) {
     throw new AuthError(error.status === 422 ? error.message : GENERIC_FAILURE);
   }

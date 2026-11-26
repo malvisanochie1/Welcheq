@@ -17,3 +17,5 @@ export const PRIMARY_NAVIGATION: readonly NavigationItem[] = [
 export const NAVIGATION_ALIASES: Readonly<Record<string, string>> = {
   '/patients': '/home',
 };
+
+export const EMAIL_CONFIRMED_PATH = '/email-confirmed';
