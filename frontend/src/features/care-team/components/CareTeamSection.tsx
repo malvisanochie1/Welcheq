@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { PressableScale } from '@/components/ui/PressableScale';
 import { Text } from '@/components/ui/Text';
 import { INVITE_COPY, RELATIONSHIP_LABEL } from '@/config/care-team';
 import type { Patient } from '@/features/patients/api/patients.api';
@@ -49,22 +50,40 @@ export function CareTeamSection({ patient }: CareTeamSectionProps) {
           {members.data.map((member, index) => {
             const canRemove = isOwner && member.relationship !== CARE_RELATIONSHIP.OWNER;
             const isConfirming = confirmingRemoval === member.userId;
+            const isCaregiver = member.relationship === CARE_RELATIONSHIP.CAREGIVER;
             return (
               <View
                 key={member.userId}
                 className={cn('gap-3 py-4', index > 0 && 'border-t border-border')}
               >
                 <View className="flex-row items-center gap-3">
-                  <View className="flex-1 gap-1">
-                    <Text variant="label" className="text-base">
+                  <PressableScale
+                    accessibilityRole={isCaregiver ? 'link' : undefined}
+                    disabled={!isCaregiver}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/patients/[patientId]/caregiver',
+                        params: { patientId: patient.id, caregiverId: member.userId },
+                      })
+                    }
+                    className="flex-1 gap-1"
+                  >
+                    <Text
+                      variant="label"
+                      className={cn('text-base', isCaregiver && 'text-primary')}
+                    >
                       {member.fullName}
                     </Text>
                     <Text variant="caption">
-                      {[RELATIONSHIP_LABEL[member.relationship], member.phone]
+                      {[
+                        RELATIONSHIP_LABEL[member.relationship],
+                        member.phone,
+                        isCaregiver ? 'Reviews and track record' : null,
+                      ]
                         .filter(Boolean)
                         .join(' · ')}
                     </Text>
-                  </View>
+                  </PressableScale>
                   {canRemove && !isConfirming && (
                     <Button
                       label="Remove"

@@ -1,0 +1,7 @@
+export const REVIEW_RULES = {
+  MIN_RATING: 1,
+  MAX_RATING: 5,
+  COMMENT_MAX_LENGTH: 600,
+  RECENT_REVIEWS: 10,
+  TRACK_RECORD_DAYS: 90,
+} as const;

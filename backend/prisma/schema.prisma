@@ -152,6 +152,8 @@ model User {
   documentsUploaded   HealthDocument[]     @relation("DocumentUploader")
   notifications       Notification[]
   messages            Message[]
+  reviewsReceived     CaregiverReview[]    @relation("ReviewedCaregiver")
+  reviewsWritten      CaregiverReview[]    @relation("ReviewAuthor")
 
   @@map("users")
 }
@@ -220,6 +222,7 @@ model Patient {
   documents       HealthDocument[]
   notifications   Notification[]
   messages        Message[]
+  reviews         CaregiverReview[]
 
   @@index([organizationId])
   @@map("patients")
@@ -569,6 +572,25 @@ model Message {
 
   @@index([patientId, createdAt])
   @@map("messages")
+}
+
+model CaregiverReview {
+  id          String   @id @default(uuid()) @db.Uuid
+  patientId   String   @db.Uuid
+  caregiverId String   @db.Uuid
+  reviewerId  String   @db.Uuid
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  caregiver User    @relation("ReviewedCaregiver", fields: [caregiverId], references: [id], onDelete: Cascade)
+  reviewer  User    @relation("ReviewAuthor", fields: [reviewerId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, caregiverId, reviewerId])
+  @@index([caregiverId, updatedAt])
+  @@map("caregiver_reviews")
 }
 
 model AuditEvent {
