@@ -15,6 +15,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ErrorState } from '@/components/layout/ErrorState';
 import { useAccessStage } from '@/features/auth/hooks/use-access-stage';
+import { useOwnProfile } from '@/features/auth/hooks/use-own-profile';
+import { LockScreen } from '@/features/security/components/LockScreen';
+import { useInactivityLock } from '@/features/security/hooks/use-inactivity-lock';
+import { useAppLockStore } from '@/features/security/stores/app-lock.store';
 import { useSessionStore } from '@/features/auth/stores/session.store';
 import { queryClient } from '@/lib/query-client';
 
@@ -42,6 +46,11 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const { stage, errorMessage, retry } = useAccessStage();
+  const { data: profile } = useOwnProfile();
+  const isSignedIn = stage === 'ready' || stage === 'needs-profile';
+  const isLocked = useAppLockStore((state) => state.isLocked);
+
+  useInactivityLock(isSignedIn);
 
   useEffect(() => {
     if (stage !== 'resolving') {
@@ -64,18 +73,21 @@ function RootNavigator() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
-      <Stack.Screen name="index" />
-      <Stack.Protected guard={stage === 'signed-out'}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-      <Stack.Protected guard={stage === 'needs-profile'}>
-        <Stack.Screen name="setup-profile" />
-      </Stack.Protected>
-      <Stack.Protected guard={stage === 'ready'}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+        <Stack.Screen name="index" />
+        <Stack.Protected guard={stage === 'signed-out'}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'needs-profile'}>
+          <Stack.Screen name="setup-profile" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'ready'}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      {isSignedIn && isLocked && <LockScreen firstName={profile?.fullName.split(' ')[0]} />}
+    </>
   );
 }

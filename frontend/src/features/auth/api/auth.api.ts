@@ -17,6 +17,20 @@ export async function signInWithPassword(input: SignInInput): Promise<void> {
   }
 }
 
+export async function verifyCurrentPassword(password: string): Promise<SignInInput> {
+  const { data } = await supabase.auth.getUser();
+  const email = data.user?.email;
+  if (!email) {
+    throw new AuthError('Please sign in again.');
+  }
+
+  const credentials = { email, password };
+  await signInWithPassword(credentials).catch(() => {
+    throw new AuthError('That password is not correct.');
+  });
+  return credentials;
+}
+
 export type SignUpOutcome = 'signed-in' | 'confirm-email';
 
 export async function signUpWithPassword(input: SignUpInput): Promise<SignUpOutcome> {

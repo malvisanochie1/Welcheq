@@ -1,11 +1,13 @@
 import { signInSchema, type SignInInput } from '@welcheq/shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { FormMessage } from '@/components/ui/FormMessage';
 import { TextField } from '@/components/ui/TextField';
 import { toFieldErrors, type FieldErrors } from '@/lib/form-errors';
+import { BiometricButton } from '@/features/security/components/BiometricButton';
+import { useBiometricSignIn } from '@/features/security/hooks/use-biometric-sign-in';
 import { AuthError, signInWithPassword } from '../api/auth.api';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
 
@@ -17,6 +19,17 @@ export function SignInForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    enrolledEmail,
+    isEnabled: isBiometricEnabled,
+    signInWithBiometrics,
+  } = useBiometricSignIn();
+
+  useEffect(() => {
+    if (enrolledEmail) {
+      setValues((current) => (current.email ? current : { ...current, email: enrolledEmail }));
+    }
+  }, [enrolledEmail]);
 
   const updateField = (field: keyof SignInInput) => (text: string) =>
     setValues((current) => ({ ...current, [field]: text }));
@@ -34,6 +47,18 @@ export function SignInForm() {
     setIsSubmitting(true);
     try {
       await signInWithPassword(parsed.data);
+    } catch (error) {
+      setFormError(error instanceof AuthError ? error.message : 'Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const signInWithFingerprint = async () => {
+    setFormError(null);
+    setIsSubmitting(true);
+    try {
+      await signInWithBiometrics();
     } catch (error) {
       setFormError(error instanceof AuthError ? error.message : 'Please try again.');
     } finally {
@@ -66,10 +91,13 @@ export function SignInForm() {
         returnKeyType="go"
         onSubmitEditing={submit}
         trailing={
-          <PasswordVisibilityToggle
-            isVisible={isPasswordVisible}
-            onToggle={() => setIsPasswordVisible((visible) => !visible)}
-          />
+          <View className="flex-row items-center">
+            <PasswordVisibilityToggle
+              isVisible={isPasswordVisible}
+              onToggle={() => setIsPasswordVisible((visible) => !visible)}
+            />
+            {isBiometricEnabled && <BiometricButton onPress={signInWithFingerprint} />}
+          </View>
         }
       />
       <Button label="Sign in" onPress={submit} isLoading={isSubmitting} />
