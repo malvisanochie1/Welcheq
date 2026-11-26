@@ -1,4 +1,4 @@
-import { PATIENT_EDITOR_RELATIONSHIPS } from '@welcheq/shared';
+import { FAMILY_RELATIONSHIPS, PATIENT_EDITOR_RELATIONSHIPS } from '@welcheq/shared';
 import { useLocalSearchParams } from 'expo-router';
 
 import { ErrorState } from '@/components/layout/ErrorState';
@@ -9,6 +9,7 @@ import { AllergiesSection } from '@/features/health-profile/components/Allergies
 import { ConditionsSection } from '@/features/health-profile/components/ConditionsSection';
 import { DocumentsSection } from '@/features/health-profile/components/DocumentsSection';
 import { MedicationsSection } from '@/features/health-profile/components/MedicationsSection';
+import { ShareRecordCard } from '@/features/health-profile/components/ShareRecordCard';
 import { useHealthProfile } from '@/features/health-profile/hooks/use-health-profile';
 import { usePatient } from '@/features/patients/hooks/use-patients';
 
@@ -19,6 +20,10 @@ export default function HealthRecordScreen() {
   const patient = usePatient(patientId);
   const profile = useHealthProfile(patientId);
   const canEdit = (PATIENT_EDITOR_RELATIONSHIPS as readonly string[]).includes(
+    patient.data?.relationship ?? '',
+  );
+
+  const isFamily = (FAMILY_RELATIONSHIPS as readonly string[]).includes(
     patient.data?.relationship ?? '',
   );
 
@@ -63,6 +68,9 @@ export default function HealthRecordScreen() {
             canEdit={canEdit}
           />
           <DocumentsSection patientId={patientId} canEdit={canEdit} />
+          {isFamily && patient.data && (
+            <ShareRecordCard patientId={patientId} patientName={patient.data.fullName} />
+          )}
         </>
       )}
     </Screen>

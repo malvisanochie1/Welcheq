@@ -184,3 +184,32 @@ describe('health documents', () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe('health record export', () => {
+  it('gives the family a FHIR bundle and records the export', async () => {
+    const { owner, patientId, base } = await setUp();
+    await request(app)
+      .post(`${base}/allergies`)
+      .set(owner.header)
+      .send({ substance: 'Penicillin', severity: 'SEVERE' })
+      .expect(201);
+
+    const exported = await request(app).get(`/v1/patients/${patientId}/fhir`).set(owner.header);
+    const bundle = exported.body.data;
+    expect(bundle).toMatchObject({ resourceType: 'Bundle', type: 'collection' });
+    expect(
+      bundle.entry.map(
+        (entry: { resource: { resourceType: string } }) => entry.resource.resourceType,
+      ),
+    ).toEqual(['Patient', 'AllergyIntolerance']);
+    expect(await prisma.auditEvent.count({ where: { action: 'health_record.exported' } })).toBe(1);
+  });
+
+  it('is not available to caregivers', async () => {
+    const { owner, patientId } = await setUp();
+    const caregiver = await join(owner, patientId);
+    expect(
+      (await request(app).get(`/v1/patients/${patientId}/fhir`).set(caregiver.header)).status,
+    ).toBe(403);
+  });
+});
