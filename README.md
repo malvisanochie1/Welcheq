@@ -67,7 +67,7 @@ welcheq/
     src/modules/     one folder per domain (routes, controller, service, repository)
     src/middleware/  authentication, rate limiting, errors
   shared/          validation schemas, domain constants and logic used by both sides
-  docs/            screenshots
+  docs/            screenshots and the launch checklist
 ```
 
 ## Getting started
@@ -128,6 +128,10 @@ Backend tests need a local PostgreSQL database named `welcheq_test`.
 | `EXPO_PUBLIC_WEB_URL`                  | Web app address, used in email links | `http://localhost:8081`   |
 | `EXPO_PUBLIC_SUPABASE_URL`             | Supabase project URL                 | `https://abc.supabase.co` |
 | `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key             | `sb_publishable_...`      |
+
+## Before launch
+
+Some settings are relaxed while the app is being built. See the [launch checklist](docs/launch-checklist.md) before inviting real families.
 
 ## License
 
