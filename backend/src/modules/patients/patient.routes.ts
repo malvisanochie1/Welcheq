@@ -8,6 +8,7 @@ import { dailyCallController } from '@/modules/daily-call/daily-call.controller'
 import { dailyCallRouter } from '@/modules/daily-call/daily-call.routes';
 import { readingRouter } from '@/modules/health-records/reading.routes';
 import { healthProfileRouter } from '@/modules/health-profile/health-profile.routes';
+import { messageRouter } from '@/modules/messages/message.routes';
 import { incidentRouter } from '@/modules/incidents/incident.routes';
 import { patientHomeDisplayRouter } from '@/modules/home-display/home-display.routes';
 import { careTaskRouter, checklistRouter } from '@/modules/care-plan/care-plan.routes';
@@ -40,3 +41,4 @@ patientRouter.use('/:patientId/daily-call', dailyCallRouter);
 patientRouter.use('/:patientId/readings', readingRouter);
 patientRouter.use('/:patientId/incidents', incidentRouter);
 patientRouter.use('/:patientId/health-profile', healthProfileRouter);
+patientRouter.use('/:patientId/messages', messageRouter);

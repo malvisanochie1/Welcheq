@@ -151,6 +151,7 @@ model User {
   conditionsAdded     Condition[]          @relation("ConditionAuthor")
   documentsUploaded   HealthDocument[]     @relation("DocumentUploader")
   notifications       Notification[]
+  messages            Message[]
 
   @@map("users")
 }
@@ -218,6 +219,7 @@ model Patient {
   conditions      Condition[]
   documents       HealthDocument[]
   notifications   Notification[]
+  messages        Message[]
 
   @@index([organizationId])
   @@map("patients")
@@ -553,6 +555,20 @@ model Notification {
   @@unique([userId, dedupeKey])
   @@index([userId, createdAt])
   @@map("notifications")
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid
+  patientId String   @db.Uuid
+  authorId  String   @db.Uuid
+  body      String
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([patientId, createdAt])
+  @@map("messages")
 }
 
 model AuditEvent {

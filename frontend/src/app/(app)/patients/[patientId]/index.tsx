@@ -11,6 +11,7 @@ import {
   ClipboardList,
   HeartPulse,
   ListChecks,
+  MessagesSquare,
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react-native';
@@ -107,6 +108,12 @@ export default function PatientScreen() {
       {isFamily && <DailyCallCard patientId={patientId} relationship={patient.data.relationship} />}
 
       <View className="gap-3">
+        <LinkCard
+          icon={MessagesSquare}
+          title="Messages"
+          subtitle="Talk with the family and caregivers"
+          onPress={() => router.push({ pathname: '/patients/[patientId]/messages', params })}
+        />
         <LinkCard
           icon={CalendarClock}
           title="Visits"

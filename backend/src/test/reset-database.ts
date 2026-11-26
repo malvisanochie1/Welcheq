@@ -4,6 +4,7 @@ import type { PrismaClient } from '@/generated/prisma/client';
 export async function resetDatabase(prisma: PrismaClient) {
   await prisma.auditEvent.deleteMany();
   await prisma.notification.deleteMany();
+  await prisma.message.deleteMany();
   await prisma.healthDocument.deleteMany();
   await prisma.medication.deleteMany();
   await prisma.allergy.deleteMany();
