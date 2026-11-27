@@ -5,6 +5,7 @@ import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { BRAND } from '@/config/brand';
+import { TryDemo } from '@/features/demo/components/TryDemo';
 
 const PROMISES = [
   'Know the moment your caregiver arrives and leaves.',
@@ -14,7 +15,7 @@ const PROMISES = [
 
 export default function WelcomeScreen() {
   return (
-    <Screen isScrollable={false} contentClassName="justify-between">
+    <Screen contentClassName="justify-between gap-8">
       <View className="gap-3 pt-8">
         <Text variant="label" className="text-primary">
           {BRAND.NAME}
@@ -34,6 +35,7 @@ export default function WelcomeScreen() {
       </View>
 
       <View className="gap-3 pb-4">
+        <TryDemo />
         <Button label="Get started" onPress={() => router.push('/sign-up')} />
         <Button
           label="I already have an account"

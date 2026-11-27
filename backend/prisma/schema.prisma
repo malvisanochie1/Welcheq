@@ -128,6 +128,8 @@ model User {
   role      UserRole
   /// Set when the person deletes their account; their personal details are cleared at the same time.
   deletedAt DateTime?
+  /// Shared read-only accounts behind "Try the demo"; their data is rebuilt every day.
+  isDemo    Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -593,6 +595,14 @@ model CaregiverReview {
   @@unique([patientId, caregiverId, reviewerId])
   @@index([caregiverId, updatedAt])
   @@map("caregiver_reviews")
+}
+
+/// Single row recording when the demo data was last rebuilt.
+model DemoSeed {
+  id       Int      @id
+  seededAt DateTime
+
+  @@map("demo_seed")
 }
 
 model AuditEvent {

@@ -33,7 +33,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {Platform.OS !== 'web' && (
+      {Platform.OS !== 'web' && !profile?.isDemo && (
         <View className="gap-3">
           <Text variant="label" className="text-ink-muted">
             SECURITY
@@ -47,11 +47,13 @@ export default function SettingsScreen() {
       <View className="gap-2">
         <Button label="Sign out" variant="secondary" onPress={signOut} />
         <Button label="Privacy policy" variant="ghost" onPress={() => router.push('/privacy')} />
-        <Button
-          label="Delete my account"
-          variant="ghost"
-          onPress={() => router.push('/delete-account')}
-        />
+        {!profile?.isDemo && (
+          <Button
+            label="Delete my account"
+            variant="ghost"
+            onPress={() => router.push('/delete-account')}
+          />
+        )}
       </View>
     </Screen>
   );

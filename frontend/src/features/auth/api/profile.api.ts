@@ -10,6 +10,7 @@ export interface Profile {
   fullName: string;
   phone: string | null;
   role: UserRole;
+  isDemo: boolean;
   createdAt: string;
 }
 

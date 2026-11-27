@@ -35,3 +35,10 @@ export const homeDisplayPairRateLimit = rateLimit({
   legacyHeaders: false,
   handler: (_req, _res, next) => next(rejectWithRateLimitError()),
 });
+
+export const demoSessionRateLimit = rateLimit({
+  ...RATE_LIMITS.DEMO_SESSION,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: (_req, _res, next) => next(rejectWithRateLimitError()),
+});

@@ -8,6 +8,7 @@ const PROFILE_FIELDS = {
   fullName: true,
   phone: true,
   role: true,
+  isDemo: true,
   createdAt: true,
 } as const;
 

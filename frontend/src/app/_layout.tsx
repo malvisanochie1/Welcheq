@@ -101,7 +101,7 @@ function RootNavigator() {
         </Stack.Protected>
         <Stack.Screen name="+not-found" />
       </Stack>
-      {isSignedIn && isLocked && !isHomeDisplay && (
+      {isSignedIn && isLocked && !isHomeDisplay && !profile?.isDemo && (
         <LockScreen firstName={profile?.fullName.split(' ')[0]} />
       )}
     </>

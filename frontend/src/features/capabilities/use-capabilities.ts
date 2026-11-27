@@ -5,6 +5,7 @@ import { apiRequest } from '@/lib/api-client';
 export interface ServerCapabilities {
   selfie: boolean;
   documents: boolean;
+  demo: boolean;
 }
 
 const CAPABILITIES_STALE_MS = 10 * 60_000;

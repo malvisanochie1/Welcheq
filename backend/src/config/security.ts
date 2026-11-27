@@ -10,6 +10,8 @@ export const RATE_LIMITS = {
   WRITE: { windowMs: 15 * MINUTE_MS, limit: 60 },
   INVITATION_ACCEPT: { windowMs: 15 * MINUTE_MS, limit: 10 },
   HOME_DISPLAY_PAIR: { windowMs: 15 * MINUTE_MS, limit: 5 },
+  /** Each demo visit issues a sign-in link, so visits are limited per address. */
+  DEMO_SESSION: { windowMs: 15 * MINUTE_MS, limit: 20 },
 } as const;
 
 export const AUTH_TOKEN = {
