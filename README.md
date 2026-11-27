@@ -42,6 +42,8 @@ every visit from anywhere, and each patient's health details live in one secure 
 | **Reviews and track record**  | Families rate caregivers after a completed visit and see punctuality over the last 90 days.                   |
 | **Overview dashboard**        | Visits, on-time arrivals, missed visits and incidents across every patient, for agencies and larger families. |
 | **Share with a doctor**       | Exports the health record as FHIR R4 with LOINC-coded vital signs.                                            |
+| **Try the demo**              | One tap opens a read-only family or caregiver account filled with two weeks of made-up care history.          |
+| **Account control**           | Forgot password by email, and account deletion that removes personal data and sign-in.                        |
 | **Display settings**          | Larger text, high contrast, night mode and easier reading for people with dyslexia.                           |
 | **One product, three apps**   | Native Android and iOS apps and a full desktop web app on one shared backend.                                 |
 
