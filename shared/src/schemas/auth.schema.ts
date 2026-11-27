@@ -31,3 +31,14 @@ export const signUpSchema = z.object({
 });
 
 export type SignUpInput = z.infer<typeof signUpSchema>;
+
+export const passwordResetRequestSchema = z.object({ email: emailSchema });
+
+export const newPasswordSchema = z
+  .object({ password: passwordSchema, confirmation: z.string() })
+  .refine((values) => values.password === values.confirmation, {
+    message: 'The two passwords do not match',
+    path: ['confirmation'],
+  });
+
+export type NewPasswordInput = z.infer<typeof newPasswordSchema>;

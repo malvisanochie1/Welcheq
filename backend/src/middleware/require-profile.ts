@@ -10,6 +10,8 @@ export interface ActingUser {
   role: UserRole;
 }
 
+export const ACCOUNT_DELETED_MESSAGE = 'This account has been deleted.';
+
 declare module 'express-serve-static-core' {
   interface Request {
     actingUser?: ActingUser;
@@ -21,7 +23,7 @@ export const requireProfile: RequestHandler = async (req, _res, next) => {
   const identity = requireIdentity(req.identity);
   const user = await prisma.user.findUnique({
     where: { id: identity.userId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, deletedAt: true },
   });
 
   if (!user) {
@@ -29,8 +31,11 @@ export const requireProfile: RequestHandler = async (req, _res, next) => {
       new HttpError(403, ERROR_CODE.FORBIDDEN, 'Finish setting up your profile to continue'),
     );
   }
+  if (user.deletedAt) {
+    return next(HttpError.forbidden(ACCOUNT_DELETED_MESSAGE));
+  }
 
-  req.actingUser = user;
+  req.actingUser = { id: user.id, role: user.role };
   return next();
 };
 

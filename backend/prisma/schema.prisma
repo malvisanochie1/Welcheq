@@ -121,13 +121,15 @@ enum ProofMethod {
 }
 
 model User {
-  id        String   @id @db.Uuid
-  email     String   @unique
+  id        String    @id @db.Uuid
+  email     String    @unique
   fullName  String
   phone     String?
   role      UserRole
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  /// Set when the person deletes their account; their personal details are cleared at the same time.
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   memberships         OrganizationMember[]
   patientAccess       PatientAccess[]

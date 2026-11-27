@@ -45,6 +45,7 @@ export default function WelcomeScreen() {
           variant="ghost"
           onPress={() => router.push('/home-display-setup')}
         />
+        <Button label="Privacy policy" variant="ghost" onPress={() => router.push('/privacy')} />
       </View>
     </Screen>
   );

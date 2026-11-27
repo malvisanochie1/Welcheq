@@ -11,3 +11,4 @@ profileRouter.use(authenticate);
 profileRouter.get('/', profileController.getOwn);
 profileRouter.post('/', writeRateLimit, profileController.complete);
 profileRouter.patch('/', writeRateLimit, profileController.updateOwn);
+profileRouter.delete('/', writeRateLimit, profileController.deleteOwn);

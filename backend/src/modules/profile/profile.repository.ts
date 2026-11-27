@@ -16,6 +16,14 @@ export const profileRepository = {
     return prisma.user.findUnique({ where: { id: userId }, select: PROFILE_FIELDS });
   },
 
+  async isDeleted(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { deletedAt: true },
+    });
+    return Boolean(user?.deletedAt);
+  },
+
   create(userId: string, email: string, input: CompleteProfileInput) {
     return prisma.user.create({
       data: { id: userId, email, ...input },

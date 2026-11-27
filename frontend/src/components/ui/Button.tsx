@@ -10,6 +10,7 @@ const VARIANT_STYLES = {
   primary: { container: 'bg-primary', label: 'text-on-primary', spinner: 'on-primary' },
   secondary: { container: 'border border-border bg-surface', label: 'text-ink', spinner: 'ink' },
   ghost: { container: 'bg-transparent', label: 'text-primary', spinner: 'primary' },
+  danger: { container: 'bg-danger', label: 'text-on-primary', spinner: 'on-primary' },
 } as const satisfies Record<string, { container: string; label: string; spinner: PaletteName }>;
 
 export type ButtonVariant = keyof typeof VARIANT_STYLES;

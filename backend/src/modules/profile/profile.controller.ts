@@ -16,6 +16,11 @@ export const profileController = {
     res.status(201).json({ data: profile });
   }) satisfies RequestHandler,
 
+  deleteOwn: (async (req, res) => {
+    await profileService.deleteOwnAccount(requireIdentity(req.identity));
+    res.status(204).end();
+  }) satisfies RequestHandler,
+
   updateOwn: (async (req, res) => {
     const input = updateProfileSchema.parse(req.body);
     const profile = await profileService.updateOwnProfile(requireIdentity(req.identity), input);

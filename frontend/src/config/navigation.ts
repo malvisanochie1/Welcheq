@@ -37,3 +37,5 @@ export const NAVIGATION_ALIASES: Readonly<Record<string, string>> = {
 };
 
 export const EMAIL_CONFIRMED_PATH = '/email-confirmed';
+
+export const RESET_PASSWORD_PATH = '/reset-password';

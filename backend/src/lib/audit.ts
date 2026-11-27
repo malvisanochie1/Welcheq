@@ -26,6 +26,7 @@ export const AUDIT_ACTION = {
   HEALTH_DOCUMENT_ADDED: 'health_document.added',
   HEALTH_DOCUMENT_REMOVED: 'health_document.removed',
   HEALTH_RECORD_EXPORTED: 'health_record.exported',
+  ACCOUNT_DELETED: 'account.deleted',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTION)[keyof typeof AUDIT_ACTION];

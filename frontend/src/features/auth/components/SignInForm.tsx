@@ -1,4 +1,5 @@
 import { signInSchema, type SignInInput } from '@welcheq/shared';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
@@ -101,6 +102,11 @@ export function SignInForm() {
         }
       />
       <Button label="Sign in" onPress={submit} isLoading={isSubmitting} />
+      <Button
+        label="Forgot your password?"
+        variant="ghost"
+        onPress={() => router.push('/forgot-password')}
+      />
     </View>
   );
 }

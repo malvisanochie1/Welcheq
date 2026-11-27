@@ -1,12 +1,13 @@
 import type { SignInInput, SignUpInput } from '@welcheq/shared';
 
 import { publicEnv } from '@/config/env';
-import { EMAIL_CONFIRMED_PATH } from '@/config/navigation';
+import { EMAIL_CONFIRMED_PATH, RESET_PASSWORD_PATH } from '@/config/navigation';
 import { queryClient } from '@/lib/query-client';
 import { supabase } from '@/lib/supabase';
 
 const GENERIC_SIGN_IN_ERROR = 'Email or password is incorrect.';
 const GENERIC_FAILURE = 'Something went wrong. Please try again.';
+const TOO_MANY_REQUESTS = 429;
 
 /** Supabase error codes worth explaining; anything else gets a safe, general message. */
 const AUTH_ERROR_MESSAGES: Readonly<Record<string, string>> = {
@@ -66,4 +67,33 @@ export async function signUpWithPassword(input: SignUpInput): Promise<SignUpOutc
 export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
   queryClient.clear();
+}
+
+/** Always reports success, so the form never reveals whether an email has an account. */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${publicEnv.webUrl}${RESET_PASSWORD_PATH}`,
+  });
+  if (error && error.status === TOO_MANY_REQUESTS) {
+    throw new AuthError(messageFor(error, GENERIC_FAILURE));
+  }
+}
+
+export async function setNewPassword(password: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    throw new AuthError(
+      error.code === 'same_password'
+        ? 'Choose a password you have not used before.'
+        : messageFor(error, GENERIC_FAILURE),
+    );
+  }
+}
+
+/** Asks for the password again before anything irreversible, in case the phone was left unlocked. */
+export async function confirmPassword(email: string, password: string): Promise<void> {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    throw new AuthError(messageFor(error, 'That password is not right.'));
+  }
 }

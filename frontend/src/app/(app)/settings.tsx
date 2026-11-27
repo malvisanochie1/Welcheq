@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Platform, View } from 'react-native';
 
 import { Screen } from '@/components/layout/Screen';
@@ -43,7 +44,15 @@ export default function SettingsScreen() {
         </View>
       )}
 
-      <Button label="Sign out" variant="secondary" onPress={signOut} />
+      <View className="gap-2">
+        <Button label="Sign out" variant="secondary" onPress={signOut} />
+        <Button label="Privacy policy" variant="ghost" onPress={() => router.push('/privacy')} />
+        <Button
+          label="Delete my account"
+          variant="ghost"
+          onPress={() => router.push('/delete-account')}
+        />
+      </View>
     </Screen>
   );
 }

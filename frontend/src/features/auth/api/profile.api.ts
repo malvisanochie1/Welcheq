@@ -23,6 +23,7 @@ export const profileApi = {
       throw error;
     }
   },
+  deleteOwn: () => apiRequest<void>('/v1/me', { method: 'DELETE' }),
   complete: (input: CompleteProfileInput) =>
     apiRequest<Profile>('/v1/me', { method: 'POST', body: input }),
 };
